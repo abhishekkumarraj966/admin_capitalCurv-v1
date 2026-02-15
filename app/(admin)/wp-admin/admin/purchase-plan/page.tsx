@@ -207,7 +207,7 @@ export default function PurchasePlanPage() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Purchase History</h1>
+                    <h1 className="text-3xl font-black text-white tracking-tight">Purchase History</h1>
                     <p className="text-gray-500 font-bold text-sm mt-1 uppercase tracking-widest">Real-time Order Tracking</p>
                 </div>
 
@@ -236,7 +236,7 @@ export default function PurchasePlanPage() {
 
             {/* Stats Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white dark:bg-[#021F17] p-6 rounded-[2rem] border border-gray-100 dark:border-[#021F17] shadow-sm hover:shadow-md transition-all group">
+                <div className="p-6 rounded-[2rem] border shadow-sm hover:shadow-md transition-all group" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                     <div className="flex justify-between items-start">
                         <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl text-[#4A3AFF]">
                             <TrendingUp size={24} />
@@ -244,11 +244,11 @@ export default function PurchasePlanPage() {
                     </div>
                     <div className="mt-4">
                         <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Total Revenue</p>
-                        <p className="text-3xl font-black text-gray-900 dark:text-white mt-1">₹{totalRevenue.toLocaleString()}</p>
+                        <p className="text-3xl font-black text-white mt-1">₹{totalRevenue.toLocaleString()}</p>
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-[#021F17] p-6 rounded-[2rem] border border-gray-100 dark:border-[#021F17] shadow-sm hover:shadow-md transition-all">
+                <div className="p-6 rounded-[2rem] border shadow-sm hover:shadow-md transition-all" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                     <div className="flex justify-between items-start">
                         <div className="p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-2xl text-emerald-600">
                             <ShoppingBag size={24} />
@@ -256,11 +256,11 @@ export default function PurchasePlanPage() {
                     </div>
                     <div className="mt-4">
                         <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Total Sales</p>
-                        <p className="text-3xl font-black text-gray-900 dark:text-white mt-1">{filteredPurchases.length}</p>
+                        <p className="text-3xl font-black text-white mt-1">{filteredPurchases.length}</p>
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-[#021F17] p-6 rounded-[2rem] border border-gray-100 dark:border-[#021F17] shadow-sm hover:shadow-md transition-all">
+                <div className="p-6 rounded-[2rem] border shadow-sm hover:shadow-md transition-all" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                     <div className="flex justify-between items-start">
                         <div className="p-3 bg-amber-50 dark:bg-amber-900/30 rounded-2xl text-amber-600">
                             <Users size={24} />
@@ -268,7 +268,7 @@ export default function PurchasePlanPage() {
                     </div>
                     <div className="mt-4">
                         <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Active Customers</p>
-                        <p className="text-3xl font-black text-gray-900 dark:text-white mt-1">{activeUsers}</p>
+                        <p className="text-3xl font-black text-white mt-1">{activeUsers}</p>
                     </div>
                 </div>
             </div>
@@ -309,18 +309,18 @@ export default function PurchasePlanPage() {
             </div>
 
             {/* Main Table */}
-            <div className="bg-white dark:bg-[#021F17] rounded-[2.5rem] border border-gray-100 dark:border-[#021F17] shadow-sm overflow-hidden">
+            <div className="rounded-[2.5rem] border shadow-sm overflow-hidden" style={{ background: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="bg-gray-50/50 dark:bg-[#000F0A]/50">
+                        <thead className="bg-white">
                             <tr>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer Info</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Account Details</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Package Info</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Current Phase</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Amount Paid</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Order Status</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Date</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Customer Info</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Account Details</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Package Info</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Current Phase</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Amount Paid</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Order Status</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Date</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50 dark:divide-[#000F0A]/50">
@@ -363,23 +363,23 @@ export default function PurchasePlanPage() {
                                                 setSelectedPurchase(purchase);
                                                 setIsModalOpen(true);
                                             }}
-                                            className="hover:bg-gray-50/50 dark:hover:bg-[#000F0A]/50 transition-colors group cursor-pointer"
+                                            className="transition-colors group cursor-pointer"
                                         >
                                             <td className="p-6">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-[#4A3AFF] font-black text-sm">
+                                                    <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-[#000] font-black text-sm">
                                                         {(purchase.user?.firstName?.[0] || 'U')}
                                                     </div>
                                                     <div>
-                                                        <div className="text-sm font-black text-gray-900 dark:text-white">
+                                                        <div className="text-sm font-black text-white">
                                                             {purchase.user?.firstName} {purchase.user?.lastName}
                                                         </div>
-                                                        <div className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">ID: {purchase.user?.userId || 'N/A'}</div>
+                                                        <div className="text-[10px] text-white font-bold uppercase tracking-tight">ID: {purchase.user?.userId || 'N/A'}</div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="p-6">
-                                                <div className="text-sm font-bold text-gray-700 dark:text-gray-200 font-mono tracking-wider">
+                                                <div className="text-sm font-bold text-white font-mono tracking-wider">
                                                     {purchase.accountNo}
                                                 </div>
                                             </td>
@@ -392,7 +392,7 @@ export default function PurchasePlanPage() {
                                                         {purchase.plan?.accountType || 'Custom'}
                                                     </span>
                                                 </div>
-                                                <div className="text-sm font-black text-gray-900 dark:text-white mt-1.5 truncate max-w-[150px]">
+                                                <div className="text-sm font-black text-white mt-1.5 truncate max-w-[150px]">
                                                     {purchase.plan?.name || 'Deleted Plan'}
                                                 </div>
                                             </td>
@@ -402,7 +402,7 @@ export default function PurchasePlanPage() {
                                                 </span>
                                             </td>
                                             <td className="p-6">
-                                                <div className="text-md font-black text-emerald-600 dark:text-emerald-400">
+                                                <div className="text-md font-black text-emerald-300">
                                                     ₹{purchase.totalAmount?.toLocaleString()}
                                                 </div>
                                             </td>
@@ -415,7 +415,7 @@ export default function PurchasePlanPage() {
                                                 </span>
                                             </td>
                                             <td className="p-6">
-                                                <div className="text-sm font-bold text-gray-700 dark:text-gray-200">
+                                                <div className="text-sm font-bold text-white">
                                                     {purchase.createdAt ? format(new Date(purchase.createdAt), 'MMM dd, yyyy') : '-'}
                                                 </div>
                                             </td>

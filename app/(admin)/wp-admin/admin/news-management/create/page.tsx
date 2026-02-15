@@ -86,7 +86,7 @@ export default function CreateNewsPage() {
                 </button>
             </div>
 
-            <div className="bg-white dark:bg-[#021F17] rounded-2xl shadow-sm border border-gray-100 dark:border-[#021F17] p-6 max-w-4xl mx-auto">
+            <div className="rounded-2xl shadow-sm border p-6 max-w-4xl mx-auto" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>

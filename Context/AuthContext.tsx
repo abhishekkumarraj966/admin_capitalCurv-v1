@@ -2,9 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import axios from 'axios';
-
-const API_URL = 'https://curv-backend-new.onrender.com/api/v1';
+import * as authApi from '@/services/authApi';
 
 interface Permissions {
     create?: boolean;
@@ -43,7 +41,6 @@ interface User {
     status?: string;
     accountBalance?: number;
     lastLogin?: string;
-    // Add other user properties as needed
 }
 
 interface AuthContextType {
@@ -53,6 +50,11 @@ interface AuthContextType {
     logout: () => void;
     checkAuth: () => Promise<void>;
     isAuthenticated: boolean;
+    // Password Reset & Profile
+    forgotPassword: (email: string) => Promise<any>;
+    verifyOtp: (email: string, otp: string) => Promise<any>;
+    resetPassword: (data: any) => Promise<any>;
+    changePassword: (data: any) => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -63,22 +65,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
     const pathname = usePathname();
 
-    // Helper to get headers with token
-    const getAuthHeaders = () => {
-        const token = localStorage.getItem('adminAccessToken');
-        console.log('Using token for headers:', token); // Debug log
-        return {
-            headers: {
-                Authorization: token ? `Bearer ${token}` : '',
-            },
-        };
-    };
-
     const checkAuth = React.useCallback(async () => {
         const token = localStorage.getItem('adminAccessToken');
         const isAuthPage = pathname?.startsWith('/auth');
-
-        console.log('checkAuth running. Token present:', !!token, 'Path:', pathname);
 
         if (!token) {
             setIsLoading(false);
@@ -89,28 +78,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         try {
-            console.log('Fetching profile from:', `${API_URL}/admin/profile`);
-            const response = await axios.get(`${API_URL}/admin/profile`, getAuthHeaders());
-
-            // Based on login response structure: { result: { admin: ... } } or { result: ... }
-            const result = response.data.result;
+            const response = await authApi.getAdminProfile();
+            const result = response.result;
             const userData = result.admin || result;
 
-            // Should merge permissions if they are separate in result
             if (result.permissions && userData) {
                 userData.permissions = result.permissions;
             }
 
             setUser(userData);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to fetch profile:', error);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const err = error as any;
-            if (err.response) {
-                console.error('Error response data:', err.response.data);
-                console.error('Error status:', err.response.status);
+
+            // Try to refresh token if it was a 401
+            if (error.response?.status === 401) {
+                const rt = localStorage.getItem('adminRefreshToken');
+                if (rt) {
+                    try {
+                        const refreshRes = await authApi.refreshToken(rt);
+                        if (refreshRes.success && refreshRes.result?.accessToken) {
+                            localStorage.setItem('adminAccessToken', refreshRes.result.accessToken);
+                            // Retry profile fetch once
+                            const retryRes = await authApi.getAdminProfile();
+                            const retryResult = retryRes.result;
+                            const retryUserData = retryResult.admin || retryResult;
+                            if (retryResult.permissions && retryUserData) {
+                                retryUserData.permissions = retryResult.permissions;
+                            }
+                            setUser(retryUserData);
+                            return;
+                        }
+                    } catch (refreshErr) {
+                        console.error('Token refresh failed:', refreshErr);
+                    }
+                }
             }
-            // If profile fetch fails (likely 401), clear auth and redirect
+
+            // If refresh fails or not 401, logout
             localStorage.removeItem('adminAccessToken');
             localStorage.removeItem('adminRefreshToken');
             setUser(null);
@@ -124,12 +128,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const login = async (email: string, password: string) => {
         try {
-            const response = await axios.post(`${API_URL}/admin/login`, {
-                email,
-                password,
-            });
-
-            const { result } = response.data;
+            const response = await authApi.adminLogin({ email, password });
+            const { result } = response;
 
             if (result && result.accessToken) {
                 localStorage.setItem('adminAccessToken', result.accessToken);
@@ -137,28 +137,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     localStorage.setItem('adminRefreshToken', result.refreshToken);
                 }
 
-                if (result.admin) {
-                    setUser(result.admin);
-                } else {
-                    await checkAuth();
+                const userData = result.admin || result;
+                if (result.permissions && userData) {
+                    userData.permissions = result.permissions;
                 }
 
+                setUser(userData);
                 router.push('/wp-admin/admin');
             }
         } catch (error) {
             console.error('Login failed:', error);
-            throw error; // Re-throw to be handled by the UI (e.g., show error message)
+            throw error;
         }
     };
 
     const logout = async () => {
         try {
-            // Attempt to call logout endpoint
-            await axios.post(`${API_URL}/admin/logout`, {}, getAuthHeaders());
+            await authApi.adminLogout();
         } catch (error) {
             console.error("Logout API failed", error);
         } finally {
-            // Always clear local state
             localStorage.removeItem('adminAccessToken');
             localStorage.removeItem('adminRefreshToken');
             setUser(null);
@@ -166,12 +164,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const forgotPassword = async (email: string) => {
+        return await authApi.forgotPassword(email);
+    };
+
+    const verifyOtp = async (email: string, otp: string) => {
+        return await authApi.verifyOtp(email, otp);
+    };
+
+    const resetPassword = async (data: any) => {
+        return await authApi.resetPassword(data);
+    };
+
+    const changePassword = async (data: any) => {
+        return await authApi.changePassword(data);
+    };
+
     useEffect(() => {
         checkAuth();
     }, [checkAuth]);
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, logout, checkAuth, isAuthenticated: !!user }}>
+        <AuthContext.Provider value={{
+            user,
+            isLoading,
+            login,
+            logout,
+            checkAuth,
+            isAuthenticated: !!user,
+            forgotPassword,
+            verifyOtp,
+            resetPassword,
+            changePassword
+        }}>
             {children}
         </AuthContext.Provider>
     );

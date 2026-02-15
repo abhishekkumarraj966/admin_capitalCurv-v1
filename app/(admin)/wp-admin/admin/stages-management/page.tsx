@@ -88,7 +88,7 @@ export default function StagesManagementPage() {
     }, [filteredStages]);
 
     return (
-        <div className="p-8 space-y-8 animate-in fade-in duration-500 min-h-screen bg-[#000F0A]">
+        <div className="p-8 space-y-8 animate-in fade-in duration-500 min-h-screen">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>

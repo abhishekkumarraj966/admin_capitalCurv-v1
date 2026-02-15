@@ -180,45 +180,45 @@ export default function CourseManagementPage() {
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 {/* List Section (Takes up 2 cols) */}
-                <div className="xl:col-span-2 bg-white dark:bg-[#021F17] rounded-2xl shadow-sm border border-gray-100 dark:border-[#021F17] overflow-hidden">
-                    <div className="p-6 border-b border-gray-100 dark:border-[#021F17] flex justify-between items-center">
-                        <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+                <div className="xl:col-span-2 rounded-2xl shadow-sm border overflow-hidden" style={{ background: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
+                    <div className="p-6 border-b flex justify-between items-center" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
+                        <h2 className="text-lg font-bold text-white">
                             {view === 'courses' ? 'Course List' : 'Video Library'}
                         </h2>
                     </div>
 
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-gray-50 dark:bg-[#021F17]">
+                            <thead style={{ background: 'rgba(255, 255, 255, 0.1)' }}>
                                 <tr>
-                                    <th className="p-4 text-xs font-bold text-gray-500 uppercase">Sr No.</th>
-                                    <th className="p-4 text-xs font-bold text-gray-500 uppercase">Title</th>
-                                    <th className="p-4 text-xs font-bold text-gray-500 uppercase">Thumbnail</th>
-                                    {view === 'courses' && <th className="p-4 text-xs font-bold text-gray-500 uppercase">Videos</th>}
-                                    <th className="p-4 text-xs font-bold text-gray-500 uppercase">Description</th>
-                                    {view === 'courses' && <th className="p-4 text-xs font-bold text-gray-500 uppercase">Required Plan</th>}
-                                    {view === 'videos' && <th className="p-4 text-xs font-bold text-gray-500 uppercase">Duration</th>}
-                                    <th className="p-4 text-xs font-bold text-gray-500 uppercase">Action</th>
-                                    <th className="p-4 text-xs font-bold text-gray-500 uppercase">Status</th>
-                                    <th className="p-4 text-xs font-bold text-gray-500 uppercase">Date</th>
+                                    <th className="p-4 text-xs font-bold text-white/50 uppercase">Sr No.</th>
+                                    <th className="p-4 text-xs font-bold text-white/50 uppercase">Title</th>
+                                    <th className="p-4 text-xs font-bold text-white/50 uppercase">Thumbnail</th>
+                                    {view === 'courses' && <th className="p-4 text-xs font-bold text-white/50 uppercase">Videos</th>}
+                                    <th className="p-4 text-xs font-bold text-white/50 uppercase">Description</th>
+                                    {view === 'courses' && <th className="p-4 text-xs font-bold text-white/50 uppercase">Required Plan</th>}
+                                    {view === 'videos' && <th className="p-4 text-xs font-bold text-white/50 uppercase">Duration</th>}
+                                    <th className="p-4 text-xs font-bold text-white/50 uppercase">Action</th>
+                                    <th className="p-4 text-xs font-bold text-white/50 uppercase">Status</th>
+                                    <th className="p-4 text-xs font-bold text-white/50 uppercase">Date</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100 dark:divide-[#021F17]">
+                            <tbody className="divide-y" style={{ borderColor: 'rgba(255, 255, 255, 0.05)' }}>
                                 {loading ? (
-                                    <tr><td colSpan={view === 'courses' ? 9 : 8} className="p-8 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">Loading items...</td></tr>
+                                    <tr><td colSpan={view === 'courses' ? 9 : 8} className="p-8 text-center text-white/70 font-bold uppercase tracking-widest text-xs">Loading items...</td></tr>
                                 ) : ((view === 'courses' ? courses : videos) || []).length === 0 ? (
-                                    <tr><td colSpan={view === 'courses' ? 9 : 8} className="p-8 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">No items found.</td></tr>
+                                    <tr><td colSpan={view === 'courses' ? 9 : 8} className="p-8 text-center text-white/70 font-bold uppercase tracking-widest text-xs">No items found.</td></tr>
                                 ) : (
                                     ((view === 'courses' ? courses : videos) || []).map((item: any, index: number) => (
-                                        <tr key={item._id} className="hover:bg-gray-50/50 dark:hover:bg-[#000F0A]/50 transition-colors">
-                                            <td className="p-4 text-sm font-medium text-gray-900 dark:text-white">{index + 1}</td>
-                                            <td className="p-4 text-sm font-bold text-gray-900 dark:text-white max-w-[200px] truncate" title={item.title}>{item.title}</td>
+                                        <tr key={item._id} className="hover:bg-white/5 transition-colors">
+                                            <td className="p-4 text-sm font-medium text-white">{index + 1}</td>
+                                            <td className="p-4 text-sm font-bold text-white max-w-[200px] truncate" title={item.title}>{item.title}</td>
                                             <td className="p-4">
                                                 <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 overflow-hidden shadow-sm">
                                                     {item.thumbnail ? (
                                                         <img src={item.thumbnail} alt="" className="w-full h-full object-cover" />
                                                     ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-400">NO IMG</div>
+                                                        <div className="w-full h-full flex items-center justify-center text-[10px] text-white/50">NO IMG</div>
                                                     )}
                                                 </div>
                                             </td>
@@ -229,7 +229,7 @@ export default function CourseManagementPage() {
                                                     </span>
                                                 </td>
                                             )}
-                                            <td className="p-4 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate" title={item.description}>{item.description}</td>
+                                            <td className="p-4 text-sm text-white/70 max-w-[200px] truncate" title={item.description}>{item.description}</td>
                                             {view === 'courses' && (
                                                 <td className="p-4">
                                                     <span className="px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-lg text-xs font-bold">
@@ -259,14 +259,14 @@ export default function CourseManagementPage() {
                                                     )}
                                                     <button
                                                         onClick={() => handleEdit(item)}
-                                                        className="p-1.5 text-emerald-500 hover:bg-emerald-50 rounded-lg transition-colors"
+                                                        className="p-1.5 text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition-colors"
                                                         title="Edit"
                                                     >
                                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                     </button>
                                                     <button
                                                         onClick={() => view === 'courses' ? handleDeleteCourse(item._id) : handleDeleteVideo(item._id)}
-                                                        className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                        className="p-1.5 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                                                         title="Delete"
                                                     >
                                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
@@ -281,7 +281,7 @@ export default function CourseManagementPage() {
                                                     {item.isActive ? 'Active' : 'Inactive'}
                                                 </span>
                                             </td>
-                                            <td className="p-4 text-xs font-bold text-gray-500 dark:text-gray-400">
+                                            <td className="p-4 text-xs font-bold text-white/50">
                                                 {item.createdAt ? format(new Date(item.createdAt), 'dd/MM/yyyy') : '-'}
                                             </td>
                                         </tr>
@@ -293,23 +293,23 @@ export default function CourseManagementPage() {
                 </div>
 
                 {/* Form Section (Takes up 1 col) */}
-                <div className="bg-white dark:bg-[#021F17] rounded-2xl shadow-sm border border-gray-100 dark:border-[#021F17] p-6 h-fit sticky top-6">
+                <div className="rounded-2xl shadow-sm border p-6 h-fit sticky top-6" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                     <div className="mb-6 text-center">
                         <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-3">
                             <svg className="w-6 h-6 text-gray-900 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                         </div>
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                        <h2 className="text-xl font-bold text-white">
                             {view === 'courses' ? (editingId ? 'Edit Course' : 'Create Course') : (editingId ? 'Edit Video' : 'Upload Video')}
                         </h2>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        <p className="text-sm text-white/70 mt-1">
                             {view === 'courses' ? 'Add or edit an educational course' : 'MP4, AVI, MKV files are allowed'}
                         </p>
                     </div>
 
                     <form onSubmit={view === 'courses' ? handleCreateOrUpdateCourse : handleCreateOrUpdateVideo} className="space-y-4">
                         {/* Thumbnail Upload Area */}
-                        <div className="border-2 border-dashed border-gray-200 dark:border-[#021F17] rounded-xl p-8 text-center hover:border-emerald-500 transition-colors cursor-pointer bg-gray-50 dark:bg-[#000F0A]/50">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <div className="border-2 border-dashed rounded-xl p-8 text-center hover:border-emerald-500 transition-colors cursor-pointer" style={{ borderColor: 'rgba(255, 255, 255, 0.2)', background: 'rgba(255, 255, 255, 0.03)' }}>
+                            <p className="text-sm text-white/70">
                                 Drag & drop a thumbnail image here, or click to select one
                             </p>
                             <input
@@ -322,7 +322,7 @@ export default function CourseManagementPage() {
                         </div>
 
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Title</label>
+                            <label className="block text-xs font-bold text-white/50 uppercase mb-1">Title</label>
                             <input
                                 type="text"
                                 placeholder="Enter title"
@@ -334,7 +334,7 @@ export default function CourseManagementPage() {
                         </div>
 
                         <div>
-                            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Description</label>
+                            <label className="block text-xs font-bold text-white/50 uppercase mb-1">Description</label>
                             <textarea
                                 placeholder="Enter description"
                                 rows={4}
@@ -348,7 +348,7 @@ export default function CourseManagementPage() {
                         {view === 'courses' ? (
                             <>
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Required Plan</label>
+                                    <label className="block text-xs font-bold text-white/50 uppercase mb-1">Required Plan</label>
                                     <input
                                         type="text"
                                         placeholder="E.g. Pro, Premium"
@@ -360,7 +360,7 @@ export default function CourseManagementPage() {
                             </>
                         ) : (
                             <div>
-                                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Video URL</label>
+                                <label className="block text-xs font-bold text-white/50 uppercase mb-1">Video URL</label>
                                 <input
                                     type="text"
                                     placeholder="Enter video URL"
@@ -403,10 +403,10 @@ export default function CourseManagementPage() {
 // Components
 function StatsCard({ label, value, icon, color }: any) {
     return (
-        <div className="bg-white dark:bg-[#021F17] p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-[#021F17] flex items-center justify-between">
+        <div className="p-6 rounded-2xl shadow-sm border flex items-center justify-between" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
             <div>
-                <p className="text-sm font-bold text-gray-500 dark:text-gray-400">{label}</p>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{value}</h3>
+                <p className="text-sm font-bold text-white/70">{label}</p>
+                <h3 className="text-2xl font-bold text-white mt-1">{value}</h3>
             </div>
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}>
                 {icon}

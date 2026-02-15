@@ -69,9 +69,9 @@ export default function UserManagementPage() {
     }
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-500 bg-gray-50/50 dark:bg-[#000F0A] p-6 rounded-2xl min-h-screen">
+        <div className="space-y-6 animate-in fade-in duration-500 p-6 rounded-2xl min-h-screen">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">User Management</h1>
+                <h1 className="text-xl font-bold text-white">User Management</h1>
 
                 <div className="relative flex-1 max-w-md mx-auto">
                     <input
@@ -79,7 +79,7 @@ export default function UserManagementPage() {
                         placeholder="Search by Name, Email"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-4 pr-10 py-2 bg-white dark:bg-[#021F17] border border-gray-200 dark:border-[#021F17] rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder:text-gray-400"
+                        className="w-full pl-4 pr-10 py-2 border rounded-lg text-sm text-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder:text-white/40" style={{ background: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.1)' }}
                     />
                     <div className="absolute right-3 top-2.5">
                         <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -91,61 +91,62 @@ export default function UserManagementPage() {
                 <div className="w-32 hidden md:block"></div> {/* Spacer to keep search centered */}
             </div>
 
-            <div className="bg-white dark:bg-[#021F17] rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-[#021F17] overflow-hidden">
+            <div className="rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.02)] border overflow-hidden" style={{ background: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse cursor-default">
                         <thead>
-                            <tr className="border-b border-gray-50 dark:border-[#021F17]">
-                                <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Sr No</th>
-                                <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">User Id</th>
-                                <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Name</th>
-                                <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Email</th>
-                                <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Phone</th>
-                                <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Code</th>
-                                <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Status</th>
-                                <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Account Balance</th>
-                                <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Action</th>
-                                <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Date</th>
+                            <tr className="border-b bg-white">
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Sr No</th>
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">User Id</th>
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Name</th>
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Email</th>
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Phone</th>
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Code</th>
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Status</th>
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Account Balance</th>
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Action</th>
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Date</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50 dark:divide-gray-700/50">
+                        <tbody className="divide-y" style={{ borderColor: 'rgba(255, 255, 255, 0.05)' }}>
                             {users.length > 0 ? (
                                 users.map((user, index) => (
-                                    <tr key={user._id} className="hover:bg-gray-50/50 dark:hover:bg-[#000F0A]/50 transition-colors">
-                                        <td className="p-4 text-center text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    <tr key={user._id} className="hover:bg-white/5 transition-colors">
+                                        <td className="p-4 text-center text-sm font-medium text-white">
                                             {(page - 1) * limit + index + 1}
                                         </td>
-                                        <td className="p-4 text-center text-sm text-gray-600 dark:text-gray-400 font-medium">
+                                        <td className="p-4 text-center text-sm text-white/70 font-medium">
                                             {user.userId}
                                         </td>
-                                        <td className="p-4 text-center text-sm font-bold text-gray-900 dark:text-white">
+                                        <td className="p-4 text-center text-sm font-bold text-white">
                                             {user.firstName} {user.lastName}
                                         </td>
-                                        <td className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
+                                        <td className="p-4 text-center text-sm text-white/70">
                                             {user.email}
                                         </td>
-                                        <td className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
+                                        <td className="p-4 text-center text-sm text-white/70">
                                             {user.mobileNumber || '-'}
                                         </td>
-                                        <td className="p-4 text-center text-sm text-gray-600 dark:text-gray-400 font-medium">
+                                        <td className="p-4 text-center text-sm text-white/70 font-medium">
                                             {user.referralCode || '-'}
                                         </td>
                                         <td className="p-4 text-center">
-                                            <span className={`px-3 py-1 rounded-md text-[10px] font-bold uppercase ${user.status === 'Active'
-                                                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400'
-                                                : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400'
+                                            <span className={`px-3 py-1.5 rounded-full text-xs font-bold shadow-sm ${user.status === 'Active'
+                                                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                                    : 'bg-red-500/20 text-red-300 border border-red-500/30'
                                                 }`}>
                                                 {user.status}
                                             </span>
                                         </td>
-                                        <td className="p-4 text-center text-sm font-bold text-gray-900 dark:text-white">
+                                        <td className="p-4 text-center text-sm font-bold text-white">
                                             {(user.accountBalance || 0).toFixed(2)}
                                         </td>
                                         <td className="p-4 text-center">
                                             <div className="flex items-center justify-center gap-3">
                                                 <button
                                                     onClick={() => { setSelectedUser(user); setShowModal('details'); }}
-                                                    className="text-emerald-500 hover:text-emerald-600 transition-colors" title="Edit"
+                                                    className="p-2 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 rounded-lg transition-all hover:scale-105 border border-emerald-500/30"
+                                                    title="Edit"
                                                 >
                                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -153,7 +154,8 @@ export default function UserManagementPage() {
                                                 </button>
                                                 <button
                                                     onClick={() => { setSelectedUser(user); setShowModal('delete'); }}
-                                                    className="text-blue-400 hover:text-blue-500 transition-colors" title="Delete"
+                                                    className="p-2 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 rounded-lg transition-all hover:scale-105 border border-blue-500/30"
+                                                    title="Delete"
                                                 >
                                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -161,7 +163,8 @@ export default function UserManagementPage() {
                                                 </button>
                                                 <button
                                                     onClick={() => { setSelectedUser(user); setShowModal('block'); }}
-                                                    className="text-red-400 hover:text-red-500 transition-colors" title="Disable"
+                                                    className="p-2 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded-lg transition-all hover:scale-105 border border-red-500/30"
+                                                    title="Disable"
                                                 >
                                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
@@ -169,14 +172,14 @@ export default function UserManagementPage() {
                                                 </button>
                                             </div>
                                         </td>
-                                        <td className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        <td className="p-4 text-center text-sm text-white/50">
                                             {user.createdAt ? format(new Date(user.createdAt), 'dd/MM/yyyy') : '-'}
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={10} className="p-8 text-center text-gray-500 dark:text-gray-400 bg-white">
+                                    <td colSpan={10} className="p-8 text-center text-white/70 bg-transparent">
                                         No users found.
                                     </td>
                                 </tr>
@@ -234,7 +237,7 @@ export default function UserManagementPage() {
 
                     {/* Delete / Block Confirmation Modal */}
                     {(showModal === 'delete' || showModal === 'block') && (
-                        <div className="relative bg-white dark:bg-[#021F17] rounded-3xl p-8 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="relative rounded-3xl p-8 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">
                                 {showModal === 'delete' ? 'Delete User' : 'Block User'}
                             </h2>
@@ -260,7 +263,7 @@ export default function UserManagementPage() {
 
                     {/* User Details Modal */}
                     {showModal === 'details' && selectedUser && (
-                        <div className="relative bg-white dark:bg-[#021F17] rounded-2xl p-8 w-full max-w-2xl shadow-2xl animate-in zoom-in-95 duration-200 border border-purple-200 dark:border-[#021F17]">
+                        <div className="relative rounded-2xl p-8 w-full max-w-2xl shadow-2xl animate-in zoom-in-95 duration-200 border" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">User Details</h2>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

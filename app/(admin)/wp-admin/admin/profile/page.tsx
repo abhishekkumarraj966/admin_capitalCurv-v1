@@ -2,9 +2,56 @@
 
 import { useAuth } from '@/Context/AuthContext';
 import { format } from 'date-fns';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+const changePasswordSchema = z.object({
+    oldPassword: z.string().min(1, 'Current password is required'),
+    newPassword: z.string().min(6, 'New password must be at least 6 characters'),
+    confirmPassword: z.string().min(1, 'Confirm password is required'),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+});
+
+type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
 export default function ProfilePage() {
-    const { user, isLoading } = useAuth();
+    const { user, isLoading, changePassword } = useAuth();
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<ChangePasswordFormData>({
+        resolver: zodResolver(changePasswordSchema),
+    });
+
+    const onSubmit = async (data: ChangePasswordFormData) => {
+        setError(null);
+        setSuccess(null);
+        setLoading(true);
+
+        try {
+            const res = await changePassword(data);
+            if (res.success) {
+                setSuccess('Password changed successfully');
+                reset();
+                setTimeout(() => setIsChangingPassword(false), 2000);
+            }
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Failed to change password. Please check your current password.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -33,13 +80,72 @@ export default function ProfilePage() {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header */}
-            <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Profile</h1>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">Manage your account and view permissions.</p>
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Profile</h1>
+                    <p className="mt-2 text-gray-600 dark:text-gray-400">Manage your account and view permissions.</p>
+                </div>
+                <button
+                    onClick={() => setIsChangingPassword(!isChangingPassword)}
+                    className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
+                >
+                    {isChangingPassword ? 'Cancel' : 'Security Settings'}
+                </button>
             </div>
 
+            {/* Change Password Form (Conditional) */}
+            {isChangingPassword && (
+                <div className="rounded-2xl p-8 border animate-in slide-in-from-top-4 duration-300"
+                    style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
+                    <h3 className="text-xl font-bold text-white mb-6">Change Account Password</h3>
+                    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-white/70 mb-2">Current Password</label>
+                            <input
+                                type="password"
+                                className={`w-full bg-white/5 border ${errors.oldPassword ? 'border-red-500' : 'border-white/10'} rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-emerald-500 transition-all`}
+                                {...register('oldPassword')}
+                            />
+                            {errors.oldPassword && <p className="text-red-500 text-xs mt-1">{errors.oldPassword.message}</p>}
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-white/70 mb-2">New Password</label>
+                                <input
+                                    type="password"
+                                    className={`w-full bg-white/5 border ${errors.newPassword ? 'border-red-500' : 'border-white/10'} rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-emerald-500 transition-all`}
+                                    {...register('newPassword')}
+                                />
+                                {errors.newPassword && <p className="text-red-500 text-xs mt-1">{errors.newPassword.message}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-white/70 mb-2">Confirm New Password</label>
+                                <input
+                                    type="password"
+                                    className={`w-full bg-white/5 border ${errors.confirmPassword ? 'border-red-500' : 'border-white/10'} rounded-xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-emerald-500 transition-all`}
+                                    {...register('confirmPassword')}
+                                />
+                                {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>}
+                            </div>
+                        </div>
+
+                        {error && <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">{error}</div>}
+                        {success && <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm">{success}</div>}
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full md:w-auto px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        >
+                            {loading && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+                            Update Password
+                        </button>
+                    </form>
+                </div>
+            )}
+
             {/* Profile Overview Card */}
-            <div className="bg-white dark:bg-[#021F17] rounded-2xl shadow-sm border border-gray-100 dark:border-[#021F17] overflow-hidden">
+            <div className="rounded-2xl shadow-sm border overflow-hidden" style={{ background: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                 <div className="p-8">
                     <div className="flex flex-col md:flex-row gap-8 items-start">
                         {/* Avatar / Initials */}
@@ -101,7 +207,7 @@ export default function ProfilePage() {
                 {user.permissions ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {Object.entries(user.permissions).map(([module, perms]) => (
-                            <div key={module} className="bg-white dark:bg-[#021F17] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-[#021F17] hover:shadow-md transition-shadow">
+                            <div key={module} className="rounded-xl p-6 shadow-sm border hover:shadow-md transition-shadow" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
                                         <svg className="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -126,7 +232,7 @@ export default function ProfilePage() {
                         ))}
                     </div>
                 ) : (
-                    <div className="bg-white dark:bg-[#021F17] rounded-xl p-8 text-center border border-gray-100 dark:border-[#021F17]">
+                    <div className="rounded-xl p-8 text-center border" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                         <p className="text-gray-500 dark:text-gray-400">No specific permissions assigned found.</p>
                     </div>
                 )}

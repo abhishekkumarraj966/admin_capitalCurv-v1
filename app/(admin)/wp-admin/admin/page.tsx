@@ -25,9 +25,9 @@ import { getUserStages } from '@/services/stagesApi';
 // Reusable Stat Card Component - PropTech Style
 function StatCard({ title, value, subtext = "+0% from last week", viewMoreLink = "#" }: any) {
   return (
-    <div className="bg-[#021F17] p-6 rounded-xl border border-[#021F17] shadow-sm relative overflow-hidden flex flex-col justify-between min-h-[140px]">
+    <div className="p-6 rounded-xl border shadow-sm relative overflow-hidden flex flex-col justify-between min-h-[140px]" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
       <div className="flex justify-between items-start mb-2">
-        <h3 className="text-gray-400 text-sm font-medium">{title}</h3>
+        <h3 className="text-white/70 text-sm font-medium">{title}</h3>
         <Link href={viewMoreLink} className="text-[10px] font-bold text-white bg-[#0F8235] px-2 py-1 rounded-[4px] uppercase tracking-wide hover:bg-[#0b6528] transition-colors">
           View More
         </Link>
@@ -37,7 +37,7 @@ function StatCard({ title, value, subtext = "+0% from last week", viewMoreLink =
         <h2 className="text-2xl font-bold text-white">{value}</h2>
       </div>
 
-      <div className="border-t border-gray-700/50 pt-3 mt-auto">
+      <div className="border-t pt-3 mt-auto" style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}>
         <p className="text-emerald-500 text-xs font-bold flex items-center">
           {subtext}
         </p>
@@ -88,25 +88,25 @@ export default function AdminDashboard() {
       try {
         const [
           usersRes,
-          pendingKycRes,
-          approvedKycRes,
+          allKycRes,
           securityStatsRes,
           courseStatsRes,
           purchasesRes,
           plansRes,
           transactionStatsRes,
           transactionsRes,
+          completedTransactionsRes,
           userStagesRes
         ] = await Promise.all([
           getUsers({ limit: 1 }).catch((e) => ({})),
-          getKycList({ status: 'Pending', limit: 1 }).catch((e) => ({})),
-          getKycList({ status: 'Approved', limit: 1 }).catch((e) => ({})),
+          getKycList({ limit: 1000 }).catch((e) => ({})),
           getSecurityStats().catch((e) => ({})),
           getCourseStats().catch((e) => ({})),
           getPurchases({ limit: 1000 }).catch((e) => ({})),
           getPlans().catch((e) => ({})),
           getTransactionStats().catch((e) => ({})),
           getTransactions({ limit: 1000 }).catch((e) => ({})),
+          getTransactions({ page: 1, limit: 1000, status: 'completed' }).catch((e) => ({})),
           getUserStages({ limit: 2000 }).catch((e) => ({}))
         ]);
 
@@ -120,11 +120,32 @@ export default function AdminDashboard() {
         };
 
         const usersCount = extractTotal(usersRes);
-        const pendingKycCount = extractTotal(pendingKycRes);
-        const approvedKycCount = extractTotal(approvedKycRes);
-        const purchases = purchasesRes.result?.data || purchasesRes.data || purchasesRes.result || [];
+
+        // Extract KYC data and count by overallStatus
+        const allKycData = allKycRes.result?.data || allKycRes.data || [];
+        const pendingKycCount = Array.isArray(allKycData)
+          ? allKycData.filter((kyc: any) => kyc.overallStatus === 'Pending').length
+          : 0;
+        const approvedKycCount = Array.isArray(allKycData)
+          ? allKycData.filter((kyc: any) => kyc.overallStatus === 'Approved').length
+          : 0;
+        const purchases = purchasesRes.result?.data || purchasesRes.data || [];
         const plans = plansRes.result?.plans || plansRes.result || plansRes.data || [];
         const tStats = transactionStatsRes.result || transactionStatsRes.data || {};
+
+        // Get count of unique plan IDs from purchases
+        const uniquePlanIds = Array.isArray(purchases)
+          ? new Set(purchases.map((p: any) => p.plan?._id).filter(Boolean)).size
+          : 0;
+
+        // Calculate average accounts per user
+        const uniqueUserIds = Array.isArray(purchases)
+          ? new Set(purchases.map((p: any) => p.user?._id).filter(Boolean)).size
+          : 0;
+        const totalPurchasesCount = Array.isArray(purchases) ? purchases.length : 0;
+        const avgAccountsPerUser = uniqueUserIds > 0
+          ? (totalPurchasesCount / uniqueUserIds).toFixed(2)
+          : '0.00';
 
         // Stages extraction
         const stagesList = userStagesRes.result?.data || userStagesRes.result || [];
@@ -137,18 +158,34 @@ export default function AdminDashboard() {
         const totalRevenue = Number(tStats.totalRevenue) || 0;
         const totalPayout = Number(tStats.totalPayout) || 0;
 
+        // Calculate total revenue from purchases totalAmount
+        const purchaseTotalRevenue = Array.isArray(purchases)
+          ? purchases.reduce((sum: number, purchase: any) => {
+            return sum + (Number(purchase.totalAmount) || 0);
+          }, 0)
+          : 0;
+
+        // Extract actual completed transactions data array
+        const completedTransactionsData = completedTransactionsRes.result?.data || completedTransactionsRes.data || [];
+        const completedPayoutCount = Array.isArray(completedTransactionsData) ? completedTransactionsData.length : 0;
+
+        // Count unique users who have completed transactions
+        const uniquePayoutUsers = Array.isArray(completedTransactionsData)
+          ? new Set(completedTransactionsData.map((t: any) => t.user?._id || t.userId).filter(Boolean)).size
+          : 0;
+
         const updatedData = {
           totalUsers: usersCount.toLocaleString(),
           pendingKyc: pendingKycCount.toLocaleString(),
           approvedKyc: approvedKycCount.toLocaleString(),
-          revenue: `₹${totalRevenue.toLocaleString()}`,
+          revenue: `₹${purchaseTotalRevenue.toLocaleString()}`,
           activePlans: plans.length.toString(),
           totalCourses: (courseStatsRes.result?.total || 0).toString(),
           platformComm: `₹${(totalRevenue * 0.15).toLocaleString()}`,
           suspiciousSessions: (securityStatsRes.result?.sessions?.suspiciousSessions || 0).toString(),
           recentAlerts: securityStatsRes.result?.recentSuspicious || [],
-          // New metrics
-          totalPurchaseAccount: totalActiveStages.toLocaleString(),
+          // Total Purchase Account shows total count of all purchases
+          totalPurchaseAccount: totalPurchasesCount.toLocaleString(),
           phase1: ph1.toLocaleString(),
           phase2: ph2.toLocaleString(),
           liveAccount: live.toLocaleString(),
@@ -156,9 +193,9 @@ export default function AdminDashboard() {
           maxDdBreached: "0.0%", // Mocked percentage for UI match
           averagePassTime: 'None', // Matching reference image "None" style
           averageFailTime: 'None',
-          totalPayoutRupees: `₹${totalPayout.toLocaleString()}`,
-          averageWithdrawal: '12.4%',
-          numberOfPayout: (tStats.payoutCount || 0).toString(),
+          totalPayoutRupees: completedPayoutCount.toLocaleString(), // Now shows count of completed transactions
+          averageWithdrawal: avgAccountsPerUser,
+          numberOfPayout: uniquePayoutUsers.toLocaleString(), // Count of unique users with completed transactions
           totalPayoutAllTime: `₹${totalPayout.toLocaleString()}`,
           total30DaysRevenue: `₹${(totalRevenue * 0.4).toLocaleString()}`, // 40% estimated for last 30d
           lastMonthPayout: `₹${(totalPayout * 0.3).toLocaleString()}`, // 30% estimated for last month
@@ -190,7 +227,7 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 bg-[#000F0A]">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <Loader2 className="w-10 h-10 text-emerald-500 animate-spin" />
         <p className="text-sm font-black text-gray-500 uppercase tracking-widest animate-pulse">Synchronizing Platform Hub...</p>
       </div>
@@ -198,7 +235,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#000F0A] p-8 font-sans">
+    <div className="min-h-screen p-8 font-sans">
       {/* Header */}
       <div className="flex justify-between items-center mb-10">
         <div>
@@ -249,8 +286,8 @@ export default function AdminDashboard() {
         </div>
 
         {/* Pass/Fail Graph */}
-        <div className="bg-[#021F17] p-6 rounded-xl border border-[#021F17] mt-8">
-          <h3 className="text-gray-400 text-sm font-medium mb-6">Pass/Fail highlights of the last 30 days</h3>
+        <div className="p-6 rounded-xl border mt-8" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
+          <h3 className="text-white/70 text-sm font-medium mb-6">Pass/Fail highlights of the last 30 days</h3>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={graphData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

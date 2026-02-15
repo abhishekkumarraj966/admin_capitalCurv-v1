@@ -153,7 +153,7 @@ export default function KycManagementPage() {
                 <div className="w-10 hidden md:block"></div>
             </div>
 
-            <div className="bg-white dark:bg-[#021F17] rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-[#021F17] overflow-hidden">
+            <div className="rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.02)] border overflow-hidden" style={{ background: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse cursor-default">
                         <thead>
@@ -281,7 +281,7 @@ export default function KycManagementPage() {
             {showDetailsModal && selectedKyc && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowDetailsModal(false)}></div>
-                    <div className="relative bg-white dark:bg-[#021F17] rounded-2xl p-8 w-full max-w-4xl shadow-2xl animate-in zoom-in-95 duration-200 border border-purple-200 dark:border-[#021F17] overflow-y-auto max-h-[90vh]">
+                    <div className="relative rounded-2xl p-8 w-full max-w-4xl shadow-2xl animate-in zoom-in-95 duration-200 border overflow-y-auto max-h-[90vh]" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-8">View KYC Details</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">

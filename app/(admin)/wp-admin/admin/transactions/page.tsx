@@ -97,7 +97,7 @@ export default function TransactionsPage() {
     }, [transactions, searchQuery]);
 
     return (
-        <div className="p-8 space-y-8 animate-in fade-in duration-500 min-h-screen bg-[#F8FAFC] dark:bg-[#000F0A]">
+        <div className="p-8 space-y-8 animate-in fade-in duration-500 min-h-screen">
             {/* Header Area */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
@@ -130,23 +130,23 @@ export default function TransactionsPage() {
                     { label: 'Pending/Failed', value: stats?.failedCount || '0', icon: XCircle, color: 'amber' },
                     { label: 'Platform Fees', value: `₹${stats?.platformFees?.toLocaleString() || '0'}`, icon: ShoppingBag, color: 'purple' }
                 ].map((stat, i) => (
-                    <div key={i} className="bg-white dark:bg-[#021F17] p-6 rounded-[2.5rem] border border-gray-100 dark:border-[#021F17] shadow-sm hover:shadow-md transition-all group">
+                    <div key={i} className="p-6 rounded-[2.5rem] border shadow-sm hover:shadow-md transition-all group" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                         <div className={`p-3 bg-${stat.color}-50 dark:bg-${stat.color}-900/20 rounded-2xl text-${stat.color}-600 inline-block`}>
                             <stat.icon size={24} />
                         </div>
                         <div className="mt-4">
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</p>
-                            <p className="text-2xl font-black text-gray-900 dark:text-white mt-1">{stat.value}</p>
+                            <p className="text-[10px] font-black text-white/50 uppercase tracking-widest">{stat.label}</p>
+                            <p className="text-2xl font-black text-white mt-1">{stat.value}</p>
                         </div>
                     </div>
                 ))}
             </div>
 
             {/* Main Content Area - Trade History Design */}
-            <div className="bg-white dark:bg-[#021F17] rounded-[3rem] border border-gray-100 dark:border-[#021F17] shadow-xl overflow-hidden min-h-[500px] flex flex-col">
+            <div className="rounded-[3rem] border shadow-xl overflow-hidden min-h-[500px] flex flex-col" style={{ background: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                 {/* Custom Modal-like Header */}
-                <div className="p-8 border-b border-gray-50 dark:border-[#021F17] flex flex-col md:flex-row justify-between items-center gap-6">
-                    <h2 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Trade History</h2>
+                <div className="p-8 border-b flex flex-col md:flex-row justify-between items-center gap-6" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
+                    <h2 className="text-xl font-black text-white uppercase tracking-tight">Trade History</h2>
 
                     <div className="relative w-full md:w-80 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#0F8235] transition-colors" size={16} />
@@ -155,14 +155,14 @@ export default function TransactionsPage() {
                             placeholder="Search by ID, User..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-[#000F0A]/50 border border-transparent rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/5 focus:bg-white dark:focus:bg-[#000F0A] transition-all font-bold text-xs border-gray-100 dark:border-[#021F17]"
+                            className="w-full pl-12 pr-4 py-3 border rounded-2xl outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all font-bold text-xs text-white placeholder:text-white/40" style={{ background: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.1)' }}
                         />
                     </div>
                 </div>
 
                 {/* Tabs Section as per Design */}
-                <div className="px-8 py-6 bg-gray-50/50 dark:bg-[#000F0A]/50 border-b border-gray-50 dark:border-[#021F17]">
-                    <div className="flex bg-white dark:bg-[#021F17] p-1.5 rounded-2xl border border-gray-100 dark:border-[#021F17] max-w-lg shadow-inner">
+                <div className="px-8 py-6 border-b" style={{ background: 'rgba(255, 255, 255, 0.03)', borderColor: 'rgba(255, 255, 255, 0.08)' }}>
+                    <div className="flex p-1.5 rounded-2xl border max-w-lg shadow-inner" style={{ background: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                         {[
                             { label: 'All Transactions', value: 'all' },
                             { label: 'Successful', value: '1' },
@@ -185,18 +185,18 @@ export default function TransactionsPage() {
                 {/* Table Section */}
                 <div className="flex-1 overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="border-b border-gray-50 dark:border-[#021F17]">
+                        <thead className="border-b" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
                             <tr>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Sr No</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Transaction Info</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">User Details</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Method</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Amount</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                                <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Date</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Sr No</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Transaction Info</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">User Details</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Method</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Amount</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Status</th>
+                                <th className="p-6 text-[10px] font-black text-white/50 uppercase tracking-widest">Date</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50 dark:divide-[#021F17]">
+                        <tbody className="divide-y" style={{ borderColor: 'rgba(255, 255, 255, 0.05)' }}>
                             {loading ? (
                                 Array.from({ length: 5 }).map((_, i) => (
                                     <tr key={i} className="animate-pulse">

@@ -45,8 +45,8 @@ export default function Sidebar() {
                 />
             )}
 
-            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#000F0A] border-r border-gray-200 dark:border-[#021F17] overflow-y-auto transition-transform duration-300 ease-in-out transform shadow-lg ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
-                <div className="flex items-center justify-between h-20 px-6 border-b border-gray-200 dark:border-[#021F17] bg-gray-50 dark:bg-[#000F0A]">
+            <aside className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-gray-200 dark:border-[#021F17]/30 overflow-y-auto transition-transform duration-300 ease-in-out transform shadow-lg ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`} style={{ background: 'linear-gradient(264.84deg, #037260 6.78%, #036958 24.2%, #024C40 55.04%, #023B32 91.68%)' }}>
+                <div className="flex items-center justify-between h-20 px-6 border-b border-white/10">
                     <Link href="/wp-admin/admin" onClick={closeSidebar}>
                         <Image
                             src="/assets/img/auth/Logo.png"
@@ -58,7 +58,7 @@ export default function Sidebar() {
                         />
                     </Link>
                     {/* Explicit close button inside sidebar for mobile */}
-                    <button onClick={closeSidebar} className="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <button onClick={closeSidebar} className="lg:hidden text-white/70 hover:text-white">
                         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -71,8 +71,8 @@ export default function Sidebar() {
                         href="/wp-admin/admin/user-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/user-management')
-                            ? 'bg-emerald-50 text-[#0F8235] dark:bg-[#0F8235]/20 dark:text-[#0F8235] font-bold'
-                            : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#021F17]'
+                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
                         <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -80,13 +80,15 @@ export default function Sidebar() {
                         </svg>
                         User Management
                     </Link>
+
+
                     {/* KYC Management */}
                     <Link
                         href="/wp-admin/admin/kyc-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/kyc-management')
-                            ? 'bg-emerald-50 text-[#0F8235] dark:bg-[#0F8235]/20 dark:text-[#0F8235] font-bold'
-                            : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#021F17]'
+                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
                         <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,8 +102,8 @@ export default function Sidebar() {
                         href="/wp-admin/admin/plan-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/plan-management')
-                            ? 'bg-emerald-50 text-[#0F8235] dark:bg-[#0F8235]/20 dark:text-[#0F8235] font-bold'
-                            : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#021F17]'
+                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
                         <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -116,8 +118,8 @@ export default function Sidebar() {
                         href="/wp-admin/admin/purchase-plan"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/purchase-plans')
-                            ? 'bg-emerald-50 text-[#0F8235] dark:bg-[#0F8235]/20 dark:text-[#0F8235] font-bold'
-                            : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#021F17]'
+                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
                         <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -131,8 +133,8 @@ export default function Sidebar() {
                         href="/wp-admin/admin/referrals-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/referrals-management')
-                            ? 'bg-emerald-50 text-[#0F8235] dark:bg-[#0F8235]/20 dark:text-[#0F8235] font-bold'
-                            : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#021F17]'
+                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
                         <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -146,8 +148,8 @@ export default function Sidebar() {
                         href="/wp-admin/admin/transactions"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/transactions')
-                            ? 'bg-emerald-50 text-[#0F8235] dark:bg-[#0F8235]/20 dark:text-[#0F8235] font-bold'
-                            : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#021F17]'
+                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
                         <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -162,8 +164,8 @@ export default function Sidebar() {
                         href="/wp-admin/admin/course-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/course-management')
-                            ? 'bg-emerald-50 text-[#0F8235] dark:bg-[#0F8235]/20 dark:text-[#0F8235] font-bold'
-                            : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#021F17]'
+                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
                         <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -176,7 +178,7 @@ export default function Sidebar() {
                     <div className="space-y-1">
                         <button
                             onClick={() => setOpenWebManagement(!openWebManagement)}
-                            className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-400 rounded-xl hover:bg-gray-100 dark:hover:bg-[#021F17] transition-colors focus:outline-none"
+                            className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-white/70 rounded-xl hover:bg-white/10 hover:text-white transition-colors focus:outline-none"
                         >
                             <div className="flex items-center">
                                 <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -195,9 +197,9 @@ export default function Sidebar() {
                         </button>
                         {openWebManagement && (
                             <div className="pl-12 space-y-1">
-                                <Link href="/wp-admin/admin/web/faqs" onClick={closeSidebar} className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-500 hover:text-[#0F8235] dark:hover:text-[#0F8235]">FAQS</Link>
-                                <Link href="/wp-admin/admin/news-management" onClick={closeSidebar} className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-500 hover:text-[#0F8235] dark:hover:text-[#0F8235]">News</Link>
-                                <Link href="/wp-admin/admin/web/blogs" onClick={closeSidebar} className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-500 hover:text-[#0F8235] dark:hover:text-[#0F8235]">Blogs</Link>
+                                <Link href="/wp-admin/admin/web/faqs" onClick={closeSidebar} className="block px-4 py-2 text-sm text-white/60 hover:text-white">FAQS</Link>
+                                <Link href="/wp-admin/admin/news-management" onClick={closeSidebar} className="block px-4 py-2 text-sm text-white/60 hover:text-white">News</Link>
+                                <Link href="/wp-admin/admin/web/blogs" onClick={closeSidebar} className="block px-4 py-2 text-sm text-white/60 hover:text-white">Blogs</Link>
                             </div>
                         )}
                     </div>
@@ -207,8 +209,8 @@ export default function Sidebar() {
                         href="/wp-admin/admin/supoort-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/supoort-management')
-                            ? 'bg-emerald-50 text-[#0F8235] dark:bg-[#0F8235]/20 dark:text-[#0F8235] font-bold'
-                            : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#021F17]'
+                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
                         <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -222,8 +224,8 @@ export default function Sidebar() {
                         href="/wp-admin/admin/user-activity"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/user-activity')
-                            ? 'bg-emerald-50 text-[#0F8235] dark:bg-[#0F8235]/20 dark:text-[#0F8235] font-bold'
-                            : 'text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#021F17]'
+                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
                         <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -231,12 +233,25 @@ export default function Sidebar() {
                         </svg>
                         User Activity
                     </Link>
-
+                    {/* Admin Management */}
+                    <Link
+                        href="/wp-admin/admin/admin-management"
+                        onClick={closeSidebar}
+                        className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/admin-management')
+                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
+                            }`}
+                    >
+                        <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        Admin Management
+                    </Link>
                     {/* Settings Accordion */}
                     <div className="space-y-1">
                         <button
                             onClick={() => setOpenSettings(!openSettings)}
-                            className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-400 rounded-xl hover:bg-gray-100 dark:hover:bg-[#021F17] transition-colors focus:outline-none"
+                            className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-white/70 rounded-xl hover:bg-white/10 hover:text-white transition-colors focus:outline-none"
                         >
                             <div className="flex items-center">
                                 <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -256,10 +271,10 @@ export default function Sidebar() {
                         </button>
                         {openSettings && (
                             <div className="pl-12 space-y-1">
-                                <Link href="/wp-admin/admin/settings/password" onClick={closeSidebar} className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-500 hover:text-[#0F8235] dark:hover:text-[#0F8235]">Change Password</Link>
+                                <Link href="/wp-admin/admin/settings/password" onClick={closeSidebar} className="block px-4 py-2 text-sm text-white/60 hover:text-white">Change Password</Link>
                                 <button
                                     onClick={() => { logout(); closeSidebar(); }}
-                                    className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+                                    className="block w-full text-left px-4 py-2 text-sm text-red-300 hover:text-red-200"
                                 >
                                     Logout
                                 </button>
