@@ -242,9 +242,6 @@ export default function AdminDashboard() {
           <h1 className="text-2xl font-bold text-white mb-1">Site Administration</h1>
           <p className="text-gray-500 text-sm">Dashboard Overview</p>
         </div>
-        <div className="bg-[#0F8235]/10 text-[#0F8235] px-3 py-1 rounded text-xs font-bold uppercase border border-[#0F8235]/20">
-          Development
-        </div>
       </div>
 
       <div className="space-y-6">
