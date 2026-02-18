@@ -1,21 +1,9 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-// Helper to get headers with token
-const getAuthHeaders = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('adminAccessToken') : null;
-    return {
-        headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-        },
-    };
-};
+import axiosInstance from './axiosInstance';
 
 // --- FAQs ---
 
 export const getFaqs = async () => {
-    const response = await axios.get(`${API_URL}/content/admin/faqs`, getAuthHeaders());
+    const response = await axiosInstance.get('/content/admin/faqs');
     return response.data;
 };
 
@@ -26,15 +14,13 @@ export const getFaqs = async () => {
 export const getFaqById = async (id: string) => {
     try {
         // 1. Try plural route (standard REST list pattern)
-        const resPlural = await axios.get(`${API_URL}/content/admin/faqs/${id}`, {
-            ...getAuthHeaders(),
+        const resPlural = await axiosInstance.get(`/content/admin/faqs/${id}`, {
             validateStatus: (status) => status < 500
         });
         if (resPlural.status === 200) return resPlural.data;
 
         // 2. Try singular route (common variation)
-        const resSingular = await axios.get(`${API_URL}/content/admin/faq/${id}`, {
-            ...getAuthHeaders(),
+        const resSingular = await axiosInstance.get(`/content/admin/faq/${id}`, {
             validateStatus: (status) => status < 500
         });
         if (resSingular.status === 200) return resSingular.data;
@@ -60,7 +46,7 @@ export const getFaqById = async (id: string) => {
 };
 
 export const createFaq = async (data: any) => {
-    const response = await axios.post(`${API_URL}/content/admin/faqs`, data, getAuthHeaders());
+    const response = await axiosInstance.post('/content/admin/faqs', data);
     return response.data;
 };
 
@@ -69,14 +55,12 @@ export const createFaq = async (data: any) => {
  */
 export const updateFaq = async (id: string, data: any) => {
     try {
-        const resPlural = await axios.put(`${API_URL}/content/admin/faqs/${id}`, data, {
-            ...getAuthHeaders(),
+        const resPlural = await axiosInstance.put(`/content/admin/faqs/${id}`, data, {
             validateStatus: (status) => status < 500
         });
         if (resPlural.status >= 200 && resPlural.status < 300) return resPlural.data;
 
-        const resSingular = await axios.put(`${API_URL}/content/admin/faq/${id}`, data, {
-            ...getAuthHeaders(),
+        const resSingular = await axiosInstance.put(`/content/admin/faq/${id}`, data, {
             validateStatus: (status) => status < 500
         });
         if (resSingular.status >= 200 && resSingular.status < 300) return resSingular.data;
@@ -84,7 +68,7 @@ export const updateFaq = async (id: string, data: any) => {
         throw new Error(`Update failed with status ${resSingular.status}`);
     } catch (error) {
         // Final attempt with original pattern if everything fails
-        const response = await axios.put(`${API_URL}/content/admin/faqs/${id}`, data, getAuthHeaders());
+        const response = await axiosInstance.put(`/content/admin/faqs/${id}`, data);
         return response.data;
     }
 };
@@ -94,21 +78,19 @@ export const updateFaq = async (id: string, data: any) => {
  */
 export const deleteFaq = async (id: string) => {
     try {
-        const resPlural = await axios.delete(`${API_URL}/content/admin/faqs/${id}`, {
-            ...getAuthHeaders(),
+        const resPlural = await axiosInstance.delete(`/content/admin/faqs/${id}`, {
             validateStatus: (status) => status < 500
         });
         if (resPlural.status >= 200 && resPlural.status < 300) return resPlural.data;
 
-        const resSingular = await axios.delete(`${API_URL}/content/admin/faq/${id}`, {
-            ...getAuthHeaders(),
+        const resSingular = await axiosInstance.delete(`/content/admin/faq/${id}`, {
             validateStatus: (status) => status < 500
         });
         if (resSingular.status >= 200 && resSingular.status < 300) return resSingular.data;
 
         throw new Error(`Delete failed with status ${resSingular.status}`);
     } catch (error) {
-        const response = await axios.delete(`${API_URL}/content/admin/faqs/${id}`, getAuthHeaders());
+        const response = await axiosInstance.delete(`/content/admin/faqs/${id}`);
         return response.data;
     }
 };
@@ -116,11 +98,11 @@ export const deleteFaq = async (id: string) => {
 // --- General Content (Terms, etc.) ---
 
 export const getAllContent = async () => {
-    const response = await axios.get(`${API_URL}/content/admin/all`, getAuthHeaders());
+    const response = await axiosInstance.get('/content/admin/all');
     return response.data;
 };
 
 export const saveContent = async (data: any) => {
-    const response = await axios.post(`${API_URL}/content/admin/content`, data, getAuthHeaders());
+    const response = await axiosInstance.post('/content/admin/content', data);
     return response.data;
 };

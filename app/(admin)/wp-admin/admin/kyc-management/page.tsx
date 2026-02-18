@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { getKycList, getKycDetails, verifyKyc, verifyBank } from '@/services/kycApi';
 import { format } from 'date-fns';
+import { getSignedUrlAction } from '@/app/actions/s3';
 
 export default function KycManagementPage() {
     const [kycs, setKycs] = useState<any[]>([]);
@@ -45,8 +46,27 @@ export default function KycManagementPage() {
 
     const handleViewDetails = async (id: string) => {
         try {
+            console.log('Fetching KYC details for ID:', id);
             const response = await getKycDetails(id);
-            const data = response.result?.kyc || response.result;
+            console.log('KYC Details Response:', response);
+
+            let data = response.result?.kyc || response.result;
+
+            // Sign URLs for images
+            if (data && data.documents) {
+                const signedDocs = await Promise.all(data.documents.map(async (doc: any) => {
+                    return {
+                        ...doc,
+                        frontImage: doc.frontImage ? await getSignedUrlAction(doc.frontImage) : doc.frontImage,
+                        backImage: doc.backImage ? await getSignedUrlAction(doc.backImage) : doc.backImage,
+                        liveImage: doc.liveImage ? await getSignedUrlAction(doc.liveImage) : doc.liveImage,
+                    };
+                }));
+                data = { ...data, documents: signedDocs };
+            }
+
+            console.log('Resolved Signed KYC Data:', data);
+
             setSelectedKyc(data);
             setAdminRemark(data?.rejectionReason || '');
             setShowDetailsModal(true);
@@ -75,6 +95,16 @@ export default function KycManagementPage() {
                 } catch (e) {
                     console.error('Failed to verify PAN:', e);
                 }
+
+                try {
+                    await verifyKyc({
+                        kycId: selectedKyc._id,
+                        documentType: 'selfie',
+                        status,
+                    });
+                } catch (e) {
+                    console.error('Failed to verify Selfie:', e);
+                }
             }
 
             setShowDetailsModal(false);
@@ -85,10 +115,20 @@ export default function KycManagementPage() {
     };
 
     const getKycData = (kyc: any) => {
+        if (!kyc) return {};
         const user = kyc.user || kyc.userId || {};
-        const documents = kyc.documents || [];
-        const aadharDoc = documents.find((d: any) => d.type === 'aadhar') || {};
-        const panDoc = documents.find((d: any) => d.type === 'pan') || {};
+        const documents = Array.isArray(kyc.documents) ? kyc.documents : [];
+
+        console.log('Processing KYC Documents:', documents);
+
+        // Case-insensitive check for type and robust filtering
+        const aadharDoc = documents.find((d: any) => d.type?.toLowerCase() === 'aadhar') || {};
+        const panDoc = documents.find((d: any) => d.type?.toLowerCase() === 'pan') || {};
+        const selfieDoc = documents.find((d: any) => d.type?.toLowerCase() === 'selfie') || {};
+
+        console.log('Found Aadhar Doc:', aadharDoc);
+        console.log('Found PAN Doc:', panDoc);
+        console.log('Found Selfie Doc:', selfieDoc);
 
         return {
             name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'N/A',
@@ -100,11 +140,15 @@ export default function KycManagementPage() {
             date: kyc.createdAt,
             aadharFront: aadharDoc.frontImage,
             aadharBack: aadharDoc.backImage,
-            panCard: panDoc.frontImage
+            panCard: panDoc.frontImage,
+            liveImage: selfieDoc.liveImage,
         };
     };
 
     const selectedKycData = selectedKyc ? getKycData(selectedKyc) : null;
+    if (selectedKyc) {
+        console.log('Final Selected KYC Data for Render:', selectedKycData);
+    }
 
     if (loading && kycs.length === 0) {
         return (
@@ -325,20 +369,94 @@ export default function KycManagementPage() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                             <div>
                                 <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Aadhar Front</label>
-                                <div className="aspect-video bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                                    {selectedKycData?.aadharFront && <img src={selectedKycData.aadharFront} alt="Aadhar Front" className="w-full h-full object-cover" />}
+                                <div className="aspect-video bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 relative">
+                                    {selectedKycData?.aadharFront ? (
+                                        <img
+                                            src={selectedKycData.aadharFront}
+                                            alt="Aadhar Front"
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                console.error('Aadhar Front Load Error', e);
+                                                (e.target as HTMLImageElement).style.display = 'none';
+                                                (e.target as HTMLImageElement).parentElement?.classList.add('flex', 'items-center', 'justify-center');
+                                                const span = document.createElement('span');
+                                                span.innerText = 'Image Failed to Load';
+                                                span.className = 'text-xs text-red-500';
+                                                (e.target as HTMLImageElement).parentElement?.appendChild(span);
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="flex items-center justify-center h-full text-gray-400 text-sm">No Image</div>
+                                    )}
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Aadhar Back</label>
-                                <div className="aspect-video bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                                    {selectedKycData?.aadharBack && <img src={selectedKycData.aadharBack} alt="Aadhar Back" className="w-full h-full object-cover" />}
+                                <div className="aspect-video bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 relative">
+                                    {selectedKycData?.aadharBack ? (
+                                        <img
+                                            src={selectedKycData.aadharBack}
+                                            alt="Aadhar Back"
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                console.error('Aadhar Back Load Error', e);
+                                                (e.target as HTMLImageElement).style.display = 'none';
+                                                (e.target as HTMLImageElement).parentElement?.classList.add('flex', 'items-center', 'justify-center');
+                                                const span = document.createElement('span');
+                                                span.innerText = 'Image Failed to Load';
+                                                span.className = 'text-xs text-red-500';
+                                                (e.target as HTMLImageElement).parentElement?.appendChild(span);
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="flex items-center justify-center h-full text-gray-400 text-sm">No Image</div>
+                                    )}
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">PAN Card</label>
-                                <div className="aspect-video bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                                    {selectedKycData?.panCard && <img src={selectedKycData.panCard} alt="PAN Card" className="w-full h-full object-cover" />}
+                                <div className="aspect-video bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 relative">
+                                    {selectedKycData?.panCard ? (
+                                        <img
+                                            src={selectedKycData.panCard}
+                                            alt="PAN Card"
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                console.error('PAN Card Load Error', e);
+                                                (e.target as HTMLImageElement).style.display = 'none';
+                                                (e.target as HTMLImageElement).parentElement?.classList.add('flex', 'items-center', 'justify-center');
+                                                const span = document.createElement('span');
+                                                span.innerText = 'Image Failed to Load';
+                                                span.className = 'text-xs text-red-500';
+                                                (e.target as HTMLImageElement).parentElement?.appendChild(span);
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="flex items-center justify-center h-full text-gray-400 text-sm">No Image</div>
+                                    )}
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Live Selfie</label>
+                                <div className="aspect-video bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 relative">
+                                    {selectedKycData?.liveImage ? (
+                                        <img
+                                            src={selectedKycData.liveImage}
+                                            alt="Live Selfie"
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                console.error('Live Selfie Load Error', e);
+                                                (e.target as HTMLImageElement).style.display = 'none';
+                                                (e.target as HTMLImageElement).parentElement?.classList.add('flex', 'items-center', 'justify-center');
+                                                const span = document.createElement('span');
+                                                span.innerText = 'Image Failed to Load';
+                                                span.className = 'text-xs text-red-500';
+                                                (e.target as HTMLImageElement).parentElement?.appendChild(span);
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="flex items-center justify-center h-full text-gray-400 text-sm">No Image</div>
+                                    )}
                                 </div>
                             </div>
                         </div>

@@ -1,20 +1,7 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-// Helper to get headers with token
-const getAuthHeaders = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('adminAccessToken') : null;
-    return {
-        headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-        },
-    };
-};
+import axiosInstance from './axiosInstance';
 
 export const getReferrals = async () => {
-    const response = await axios.get(`${API_URL}/referrals/admin`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/referrals/admin', {
         validateStatus: (status) => status < 500
     });
     return response.data;
@@ -29,7 +16,7 @@ export const creditCommission = async (data: { userId: string; amount: number })
     formData.append('userId', data.userId);
     formData.append('amount', data.amount.toString());
 
-    const response = await axios.post(`${API_URL}/referrals/admin/credit`, formData, getAuthHeaders());
+    const response = await axiosInstance.post('/referrals/admin/credit', formData);
     return response.data;
 };
 
@@ -41,19 +28,18 @@ export const cancelCommission = async (data: any) => {
         formData.append(key, data[key]);
     });
 
-    const response = await axios.post(`${API_URL}/referrals/admin/cancel`, formData, getAuthHeaders());
+    const response = await axiosInstance.post('/referrals/admin/cancel', formData);
     return response.data;
 };
 
 export const getReferralById = async (id: string) => {
     // Assuming backend supports this standard pattern
-    const response = await axios.get(`${API_URL}/referrals/admin/${id}`, getAuthHeaders());
+    const response = await axiosInstance.get(`/referrals/admin/${id}`);
     return response.data;
 };
 
 export const getReferralStats = async () => {
-    const response = await axios.get(`${API_URL}/referrals/admin/stats`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/referrals/admin/stats', {
         validateStatus: (status) => status < 500
     });
     return response.data;

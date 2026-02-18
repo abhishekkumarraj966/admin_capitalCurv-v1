@@ -1,17 +1,4 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-// Helper to get headers with token
-const getAuthHeaders = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('adminAccessToken') : null;
-    return {
-        headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-            'Content-Type': 'application/json',
-        },
-    };
-};
+import axiosInstance from './axiosInstance';
 
 export interface ReplyTicketData {
     message: string;
@@ -24,8 +11,7 @@ export interface AssignTicketData {
 
 // Get all tickets
 export const getTickets = async () => {
-    const response = await axios.get(`${API_URL}/support/admin/list`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/support/admin/list', {
         validateStatus: (status) => status < 500
     });
     return response.data;
@@ -33,13 +19,13 @@ export const getTickets = async () => {
 
 // Reply to ticket
 export const replyTicket = async (ticketId: string, data: ReplyTicketData) => {
-    const response = await axios.post(`${API_URL}/support/admin/${ticketId}/reply`, data, getAuthHeaders());
+    const response = await axiosInstance.post(`/support/admin/${ticketId}/reply`, data);
     return response.data;
 };
 
 // Assign ticket
 export const assignTicket = async (ticketId: string, data: AssignTicketData) => {
-    const response = await axios.put(`${API_URL}/support/admin/${ticketId}/assign`, data, getAuthHeaders());
+    const response = await axiosInstance.put(`/support/admin/${ticketId}/assign`, data);
     return response.data;
 };
 

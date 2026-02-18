@@ -1,38 +1,26 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-// Helper to get headers with token
-const getAuthHeaders = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('adminAccessToken') : null;
-    return {
-        headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-        },
-    };
-};
+import axiosInstance from './axiosInstance';
 
 // Course Statistics
 export const getCourseStats = async () => {
-    const response = await axios.get(`${API_URL}/courses/admin/stats`, getAuthHeaders());
+    const response = await axiosInstance.get('/courses/admin/stats');
     return response.data;
 };
 
 // Course Management
 export const getCourses = async () => {
-    const response = await axios.get(`${API_URL}/courses/admin/all`, getAuthHeaders());
+    const response = await axiosInstance.get('/courses/admin/all');
     return response.data;
 };
 
 export const createCourse = async (data: any) => {
-    const response = await axios.post(`${API_URL}/courses/admin`, data, getAuthHeaders());
+    const response = await axiosInstance.post('/courses/admin', data);
     return response.data;
 };
 
 export const updateCourse = async (id: string, data: any) => {
-    console.log(`[Diagnostic] PUT ${API_URL}/courses/admin/${id}`, data);
+    console.log(`[Diagnostic] PUT /courses/admin/${id}`, data);
     try {
-        const response = await axios.put(`${API_URL}/courses/admin/${id}`, data, getAuthHeaders());
+        const response = await axiosInstance.put(`/courses/admin/${id}`, data);
         console.log('[Diagnostic] Update Success:', response.data);
         return response.data;
     } catch (error: any) {
@@ -42,33 +30,33 @@ export const updateCourse = async (id: string, data: any) => {
 };
 
 export const deleteCourse = async (id: string) => {
-    const response = await axios.delete(`${API_URL}/courses/admin/${id}`, getAuthHeaders());
+    const response = await axiosInstance.delete(`/courses/admin/${id}`);
     return response.data;
 };
 
 // Video Management
 export const getCourseVideos = async (courseId: string) => {
-    const response = await axios.get(`${API_URL}/courses/admin/${courseId}/videos`, getAuthHeaders());
+    const response = await axiosInstance.get(`/courses/admin/${courseId}/videos`);
     return response.data;
 };
 
 export const createVideo = async (data: any) => {
     const { courseId, ...payload } = data;
-    const response = await axios.post(`${API_URL}/courses/admin/${courseId}/videos`, payload, getAuthHeaders());
+    const response = await axiosInstance.post(`/courses/admin/${courseId}/videos`, payload);
     return response.data;
 };
 
 export const updateVideo = async (id: string, data: any) => {
-    const response = await axios.put(`${API_URL}/courses/admin/videos/${id}`, data, getAuthHeaders());
+    const response = await axiosInstance.put(`/courses/admin/videos/${id}`, data);
     return response.data;
 };
 
 export const deleteVideo = async (id: string) => {
-    const response = await axios.delete(`${API_URL}/courses/admin/videos/${id}`, getAuthHeaders());
+    const response = await axiosInstance.delete(`/courses/admin/videos/${id}`);
     return response.data;
 };
 
 export const reorderVideos = async (courseId: string, videoOrder: { videoId: string; sortOrder: number }[]) => {
-    const response = await axios.put(`${API_URL}/courses/admin/${courseId}/videos/reorder`, { videoOrder }, getAuthHeaders());
+    const response = await axiosInstance.put(`/courses/admin/${courseId}/videos/reorder`, { videoOrder });
     return response.data;
 };

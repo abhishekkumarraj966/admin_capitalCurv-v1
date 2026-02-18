@@ -1,41 +1,22 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-// Helper to get headers with token
-const getAuthHeaders = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('adminAccessToken') : null;
-    return {
-        headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-        },
-    };
-};
+import axiosInstance from './axiosInstance';
 
 // --- Plans ---
 
 export const getPlans = async () => {
-    const response = await axios.get(`${API_URL}/purchase/admin/plans`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/purchase/admin/plans', {
         validateStatus: (status) => status < 500
     });
     return response.data;
 };
 
 export const createPlan = async (data: any) => {
-    const response = await axios.post(`${API_URL}/purchase/admin/plans`, data, {
-        headers: {
-            ...getAuthHeaders().headers,
-            'Content-Type': 'application/json'
-        }
-    });
+    const response = await axiosInstance.post('/purchase/admin/plans', data);
     return response.data;
 };
 
 export const getPlanById = async (id: string) => {
     // Backend doesn't support GET /plans/:id, so calculate it here
-    const response = await axios.get(`${API_URL}/purchase/admin/plans`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/purchase/admin/plans', {
         validateStatus: (status) => status < 500
     });
 
@@ -52,45 +33,33 @@ export const getPlanById = async (id: string) => {
 };
 
 export const updatePlan = async (id: string, data: any) => {
-    const response = await axios.put(`${API_URL}/purchase/admin/plans/${id}`, data, {
-        headers: {
-            ...getAuthHeaders().headers,
-            'Content-Type': 'application/json'
-        }
-    });
+    const response = await axiosInstance.put(`/purchase/admin/plans/${id}`, data);
     return response.data;
 };
 
 export const deletePlan = async (id: string) => {
-    const response = await axios.delete(`${API_URL}/purchase/admin/plans/${id}`, getAuthHeaders());
+    const response = await axiosInstance.delete(`/purchase/admin/plans/${id}`);
     return response.data;
 };
 
 // --- Add-ons ---
 
 export const getAddons = async () => {
-    const response = await axios.get(`${API_URL}/purchase/admin/addons`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/purchase/admin/addons', {
         validateStatus: (status) => status < 500
     });
     return response.data;
 };
 
 export const createAddon = async (data: any) => {
-    const response = await axios.post(`${API_URL}/purchase/admin/addons`, data, {
-        headers: {
-            ...getAuthHeaders().headers,
-            'Content-Type': 'application/json'
-        }
-    });
+    const response = await axiosInstance.post('/purchase/admin/addons', data);
     return response.data;
 };
 
 // --- Purchases ---
 
 export const getPurchases = async (params?: { page?: number; limit?: number; status?: string }) => {
-    const response = await axios.get(`${API_URL}/purchase/admin/purchases`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/purchase/admin/purchases', {
         params,
         validateStatus: (status) => status < 500
     });
@@ -100,16 +69,14 @@ export const getPurchases = async (params?: { page?: number; limit?: number; sta
 // --- Discounts ---
 
 export const getCollegeDiscounts = async () => {
-    const response = await axios.get(`${API_URL}/purchase/admin/college-discounts`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/purchase/admin/college-discounts', {
         validateStatus: (status) => status < 500
     });
     return response.data;
 };
 
 export const getCollegeDiscountStats = async () => {
-    const response = await axios.get(`${API_URL}/purchase/admin/college-discounts/stats`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/purchase/admin/college-discounts/stats', {
         validateStatus: (status) => status < 500
     });
     return response.data;

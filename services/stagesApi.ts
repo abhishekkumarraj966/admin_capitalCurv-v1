@@ -1,70 +1,38 @@
-import axios from 'axios';
-
-const API_URL = 'https://curv-backend-new.onrender.com/api/v1'; // process.env.NEXT_PUBLIC_API_URL;
-
-const getAuthHeaders = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('adminAccessToken') : null;
-    return {
-        headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-        },
-    };
-};
+import axiosInstance from './axiosInstance';
 
 export const getStageConfigs = async () => {
-    const response = await axios.get(`${API_URL}/stages/admin/config`, getAuthHeaders());
+    const response = await axiosInstance.get('/stages/admin/config');
     return response.data;
 };
 
 export const createOrUpdateStageConfig = async (data: any) => {
-    const response = await axios.post(`${API_URL}/stages/admin/config`, data, {
-        headers: {
-            ...getAuthHeaders().headers,
-            'Content-Type': 'application/json'
-        }
-    });
+    const response = await axiosInstance.post('/stages/admin/config', data);
     return response.data;
 };
 
 export const updateStageConfig = async (id: string, data: any) => {
-    const response = await axios.put(`${API_URL}/stages/admin/config/${id}`, data, {
-        headers: {
-            ...getAuthHeaders().headers,
-            'Content-Type': 'application/json'
-        }
-    });
+    const response = await axiosInstance.put(`/stages/admin/config/${id}`, data);
     return response.data;
 };
 
 export const getUserStages = async (params?: { limit?: number; page?: number }) => {
-    const response = await axios.get(`${API_URL}/stages/admin/users`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/stages/admin/users', {
         params
     });
     return response.data;
 };
 
 export const advanceUserStage = async (data: { userId: string; stageId: string }) => {
-    const response = await axios.post(`${API_URL}/stages/admin/advance`, data, {
-        headers: {
-            ...getAuthHeaders().headers,
-            'Content-Type': 'application/json'
-        }
-    });
+    const response = await axiosInstance.post('/stages/admin/advance', data);
     return response.data;
 };
 
 export const resetDailyLoss = async (stageId: string) => {
-    const response = await axios.post(`${API_URL}/stages/admin/reset-daily-loss`, { stageId }, {
-        headers: {
-            ...getAuthHeaders().headers,
-            'Content-Type': 'application/json'
-        }
-    });
+    const response = await axiosInstance.post('/stages/admin/reset-daily-loss', { stageId });
     return response.data;
 };
 
 export const getStageTrades = async (stageId: string) => {
-    const response = await axios.get(`${API_URL}/stages/admin/trades/${stageId}`, getAuthHeaders());
+    const response = await axiosInstance.get(`/stages/admin/trades/${stageId}`);
     return response.data;
 };

@@ -1,36 +1,23 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-// Helper to get headers with token
-const getAuthHeaders = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('adminAccessToken') : null;
-    return {
-        headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-        },
-    };
-};
+import axiosInstance from './axiosInstance';
 
 export const getKycList = async (params: { page?: number; limit?: number; status?: string } = {}) => {
-    const response = await axios.get(`${API_URL}/kyc/admin/list`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/kyc/admin/list', {
         params,
     });
     return response.data;
 };
 
 export const getKycDetails = async (id: string) => {
-    const response = await axios.get(`${API_URL}/kyc/admin/${id}`, getAuthHeaders());
+    const response = await axiosInstance.get(`/kyc/admin/${id}`);
     return response.data;
 };
 
 export const verifyKyc = async (data: { kycId: string; documentType: string; status: string; rejectionReason?: string }) => {
-    const response = await axios.post(`${API_URL}/kyc/admin/verify`, data, getAuthHeaders());
+    const response = await axiosInstance.post('/kyc/admin/verify', data);
     return response.data;
 };
 
 export const verifyBank = async (id: string, data: { approve: boolean }) => {
-    const response = await axios.post(`${API_URL}/kyc/admin/${id}/verify-bank`, data, getAuthHeaders());
+    const response = await axiosInstance.post(`/kyc/admin/${id}/verify-bank`, data);
     return response.data;
 };

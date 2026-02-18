@@ -1,16 +1,4 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-const getAuthHeaders = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('adminAccessToken') : null;
-    return {
-        headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-            'Content-Type': 'application/json',
-        },
-    };
-};
+import axiosInstance from './axiosInstance';
 
 export interface SessionQueryParams {
     suspicious?: boolean;
@@ -28,8 +16,7 @@ export interface ViolationQueryParams {
 
 // Get security statistics
 export const getSecurityStats = async () => {
-    const response = await axios.get(`${API_URL}/security/admin/stats`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/security/admin/stats', {
         validateStatus: (status) => status < 500
     });
     return response.data;
@@ -37,8 +24,7 @@ export const getSecurityStats = async () => {
 
 // Get all login sessions
 export const getSessions = async (params: SessionQueryParams = {}) => {
-    const response = await axios.get(`${API_URL}/security/admin/sessions`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/security/admin/sessions', {
         params,
         validateStatus: (status) => status < 500
     });
@@ -47,8 +33,7 @@ export const getSessions = async (params: SessionQueryParams = {}) => {
 
 // Get all violations
 export const getViolations = async (params: ViolationQueryParams = {}) => {
-    const response = await axios.get(`${API_URL}/security/admin/violations`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/security/admin/violations', {
         params,
         validateStatus: (status) => status < 500
     });
@@ -57,12 +42,12 @@ export const getViolations = async (params: ViolationQueryParams = {}) => {
 
 // Verify or reject a travel claim
 export const verifyTravel = async (data: { sessionId: string; isVerified: boolean; notes?: string }) => {
-    const response = await axios.post(`${API_URL}/security/admin/verify-travel`, data, getAuthHeaders());
+    const response = await axiosInstance.post('/security/admin/verify-travel', data);
     return response.data;
 };
 
 // Resolve a violation
 export const resolveViolation = async (id: string, data: { notes?: string }) => {
-    const response = await axios.put(`${API_URL}/security/admin/violations/${id}/resolve`, data, getAuthHeaders());
+    const response = await axiosInstance.put(`/security/admin/violations/${id}/resolve`, data);
     return response.data;
 };

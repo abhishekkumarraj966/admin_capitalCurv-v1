@@ -1,46 +1,33 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://curv-backend-new.onrender.com/api/v1';
-
-const getAuthHeaders = () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('adminAccessToken') : null;
-    return {
-        headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-            token: token || '',
-        },
-    };
-};
+import axiosInstance from './axiosInstance';
 
 export const getSubAdmins = async (params: { page?: number; limit?: number; search?: string; sortBy?: string; sortOrder?: string } = {}) => {
-    const response = await axios.get(`${API_URL}/admin/subadmins`, {
-        ...getAuthHeaders(),
+    const response = await axiosInstance.get('/admin/subadmins', {
         params,
     });
     return response.data;
 };
 
 export const createSubAdmin = async (data: any) => {
-    const response = await axios.post(`${API_URL}/admin/subadmins`, data, getAuthHeaders());
+    const response = await axiosInstance.post('/admin/subadmins', data);
     return response.data;
 };
 
 export const updateSubAdmin = async (id: string, data: any) => {
-    const response = await axios.put(`${API_URL}/admin/subadmins/${id}`, data, getAuthHeaders());
+    const response = await axiosInstance.put(`/admin/subadmins/${id}`, data);
     return response.data;
 };
 
 export const deleteSubAdmin = async (id: string) => {
-    const response = await axios.delete(`${API_URL}/admin/subadmins/${id}`, getAuthHeaders());
+    const response = await axiosInstance.delete(`/admin/subadmins/${id}`);
     return response.data;
 };
 
 export const getSubAdminPermissions = async (id: string) => {
-    const response = await axios.get(`${API_URL}/admin/subadmins/${id}/permissions`, getAuthHeaders());
+    const response = await axiosInstance.get(`/admin/subadmins/${id}/permissions`);
     return response.data;
 };
 
 export const updateSubAdminPermissions = async (id: string, permissions: any) => {
-    const response = await axios.put(`${API_URL}/admin/subadmins/${id}/permissions`, { permissions }, getAuthHeaders());
+    const response = await axiosInstance.put(`/admin/subadmins/${id}/permissions`, { permissions });
     return response.data;
 };
