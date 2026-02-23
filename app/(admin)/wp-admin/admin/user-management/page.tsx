@@ -95,15 +95,15 @@ export default function UserManagementPage() {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse cursor-default">
                         <thead>
-                            <tr className="border-b bg-white">
+                            <tr className="border-b bg-white/5">
                                 <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Sr No</th>
                                 <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">User Id</th>
                                 <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Name</th>
                                 <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Email</th>
                                 <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Phone</th>
-                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Code</th>
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">KYC</th>
                                 <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Status</th>
-                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Account Balance</th>
+                                <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Balance</th>
                                 <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Action</th>
                                 <th className="p-4 text-[11px] font-bold text-white/50 uppercase tracking-wider text-center">Date</th>
                             </tr>
@@ -127,19 +127,24 @@ export default function UserManagementPage() {
                                         <td className="p-4 text-center text-sm text-white/70">
                                             {user.mobileNumber || '-'}
                                         </td>
-                                        <td className="p-4 text-center text-sm text-white/70 font-medium">
-                                            {user.referralCode || '-'}
+                                        <td className="p-4 text-center">
+                                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold shadow-sm ${user.kycStatus === 'Verified' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' :
+                                                user.kycStatus === 'Rejected' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
+                                                    'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
+                                                }`}>
+                                                {user.kycStatus || 'Pending'}
+                                            </span>
                                         </td>
                                         <td className="p-4 text-center">
                                             <span className={`px-3 py-1.5 rounded-full text-xs font-bold shadow-sm ${user.status === 'Active'
-                                                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                                    : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                                : 'bg-red-500/20 text-red-300 border border-red-500/30'
                                                 }`}>
                                                 {user.status}
                                             </span>
                                         </td>
                                         <td className="p-4 text-center text-sm font-bold text-white">
-                                            {(user.accountBalance || 0).toFixed(2)}
+                                            ₹{(user.accountBalance || 0).toFixed(2)}
                                         </td>
                                         <td className="p-4 text-center">
                                             <div className="flex items-center justify-center gap-3">
@@ -283,32 +288,43 @@ export default function UserManagementPage() {
                                     <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Phone:</label>
                                     <div className="bg-gray-50 dark:bg-[#000F0A]/40 px-3 py-2 rounded-lg text-sm border border-gray-100 dark:border-[#021F17]">{selectedUser.mobileNumber || '-'}</div>
                                 </div>
+
+                                {/* Refactored Fields */}
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Aadhar:</label>
-                                    <div className="bg-gray-50 dark:bg-[#000F0A]/40 px-3 py-2 rounded-lg text-sm border border-gray-100 dark:border-[#021F17]">-</div>
+                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">KYC Status:</label>
+                                    <div className={`px-3 py-2 rounded-lg text-sm font-bold border ${selectedUser.kycStatus === 'Verified' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
+                                        selectedUser.kycStatus === 'Rejected' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                                            'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
+                                        }`}>{selectedUser.kycStatus || 'Pending'}</div>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Pan:</label>
-                                    <div className="bg-gray-50 dark:bg-[#000F0A]/40 px-3 py-2 rounded-lg text-sm border border-gray-100 dark:border-[#021F17]">-</div>
+                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Plan Status:</label>
+                                    <div className={`px-3 py-2 rounded-lg text-sm font-bold border ${selectedUser.isPlanPurchased ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-gray-50 dark:bg-[#000F0A]/40 text-gray-400 border-gray-100 dark:border-[#021F17]'
+                                        }`}>
+                                        {selectedUser.isPlanPurchased ? 'Purchased' : 'Not Purchased'}
+                                    </div>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Account Balance:</label>
-                                    <div className="bg-gray-50 dark:bg-[#000F0A]/40 px-3 py-2 rounded-lg text-sm border border-gray-100 dark:border-[#021F17]">{selectedUser.accountBalance || 0}</div>
+                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Balance:</label>
+                                    <div className="bg-gray-50 dark:bg-[#000F0A]/40 px-3 py-2 rounded-lg text-sm border border-gray-100 dark:border-[#021F17]">₹{selectedUser.accountBalance || 0}</div>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Referral By:</label>
-                                    <div className="bg-gray-50 dark:bg-[#000F0A]/40 px-3 py-2 rounded-lg text-sm border border-gray-100 dark:border-[#021F17]">-</div>
+                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Trading Acc:</label>
+                                    <div className="bg-gray-50 dark:bg-[#000F0A]/40 px-3 py-2 rounded-lg text-sm border border-gray-100 dark:border-[#021F17] truncate">{selectedUser.tradingAccountNumber || '-'}</div>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Code:</label>
+                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Referral Code:</label>
                                     <div className="bg-gray-50 dark:bg-[#000F0A]/40 px-3 py-2 rounded-lg text-sm border border-gray-100 dark:border-[#021F17]">{selectedUser.referralCode || '-'}</div>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Joining Date:</label>
-                                    <div className="bg-gray-50 dark:bg-[#000F0A]/40 px-3 py-2 rounded-lg text-sm border border-gray-100 dark:border-[#021F17]">{selectedUser.createdAt ? format(new Date(selectedUser.createdAt), 'dd/MM/yyyy') : '-'}</div>
+                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Bank Verified:</label>
+                                    <div className={`px-3 py-2 rounded-lg text-sm font-bold border ${selectedUser.bankDetails?.isVerified ? 'text-emerald-500 border-emerald-500/20' : 'text-gray-400 border-gray-200'}`}>
+                                        {selectedUser.bankDetails?.isVerified ? 'Yes' : 'No'}
+                                    </div>
                                 </div>
+
                                 <div className="md:col-span-2">
-                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Status:</label>
+                                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Account Status:</label>
                                     <select
                                         defaultValue={selectedUser.status}
                                         onChange={(e) => setSelectedUser({ ...selectedUser, status: e.target.value })}

@@ -167,7 +167,7 @@ export default function KycManagementPage() {
                     <div className="relative flex-1">
                         <input
                             type="text"
-                            placeholder="Search by Email, Ip, city..."
+                            placeholder="Search by Email, Mobile, Ip, city..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="w-full pl-4 pr-10 py-2 bg-white dark:bg-[#000F0A]/50 border border-gray-200 dark:border-[#021F17] rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder:text-gray-400"
@@ -205,6 +205,7 @@ export default function KycManagementPage() {
                                 <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Sr No</th>
                                 <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Name</th>
                                 <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Email</th>
+                                <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Mobile</th>
                                 <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Pan Num</th>
                                 <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Aadhar Num</th>
                                 <th className="p-4 text-[11px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider text-center">Status</th>
@@ -226,6 +227,9 @@ export default function KycManagementPage() {
                                             </td>
                                             <td className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
                                                 {data.email}
+                                            </td>
+                                            <td className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
+                                                {data.phone}
                                             </td>
                                             <td className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
                                                 {data.panNumber}

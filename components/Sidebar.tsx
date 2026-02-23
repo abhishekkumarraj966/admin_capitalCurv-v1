@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { useAuth } from '@/Context/AuthContext'; // Preserving typo from source 'contaxt'
+import { useAuth } from '@/Context/AuthContext';
 
 export default function Sidebar() {
     const pathname = usePathname();
@@ -45,7 +45,7 @@ export default function Sidebar() {
                 />
             )}
 
-            <aside className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-gray-200 dark:border-[#021F17]/30 overflow-y-auto transition-transform duration-300 ease-in-out transform shadow-lg ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`} style={{ background: 'linear-gradient(264.84deg, #037260 6.78%, #036958 24.2%, #024C40 55.04%, #023B32 91.68%)' }}>
+            <aside className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-white/5 bg-[#000F0A] overflow-y-auto transition-transform duration-300 ease-in-out transform shadow-lg ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
                 <div className="flex items-center justify-between h-20 px-6 border-b border-white/10">
                     <Link href="/wp-admin/admin" onClick={closeSidebar}>
                         <Image
@@ -71,7 +71,7 @@ export default function Sidebar() {
                         href="/wp-admin/admin/user-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/user-management')
-                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
                             : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
@@ -81,13 +81,43 @@ export default function Sidebar() {
                         User Management
                     </Link>
 
+                    {/* Trade Accounts */}
+                    <Link
+                        href="/wp-admin/admin/accounts"
+                        onClick={closeSidebar}
+                        className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/accounts')
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
+                            }`}
+                    >
+                        <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Trade Accounts
+                    </Link>
+
+                    {/* Risk & Security */}
+                    <Link
+                        href="/wp-admin/admin/risk"
+                        onClick={closeSidebar}
+                        className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/risk')
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
+                            }`}
+                    >
+                        <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        Risk & Security
+                    </Link>
+
 
                     {/* KYC Management */}
                     <Link
                         href="/wp-admin/admin/kyc-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/kyc-management')
-                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
                             : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
@@ -102,7 +132,7 @@ export default function Sidebar() {
                         href="/wp-admin/admin/plan-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/plan-management')
-                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
                             : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
@@ -118,7 +148,7 @@ export default function Sidebar() {
                         href="/wp-admin/admin/purchase-plan"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/purchase-plans')
-                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
                             : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
@@ -133,7 +163,7 @@ export default function Sidebar() {
                         href="/wp-admin/admin/referrals-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/referrals-management')
-                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
                             : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
@@ -148,7 +178,7 @@ export default function Sidebar() {
                         href="/wp-admin/admin/transactions"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/transactions')
-                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
                             : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
@@ -158,13 +188,28 @@ export default function Sidebar() {
                         Transactions
                     </Link>
 
+                    {/* Withdrawals */}
+                    <Link
+                        href="/wp-admin/admin/withdrawals"
+                        onClick={closeSidebar}
+                        className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/withdrawals')
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
+                            : 'text-white/70 hover:bg-white/10 hover:text-white'
+                            }`}
+                    >
+                        <svg className="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a1 1 0 11-2 0 1 1 0 012 0z" />
+                        </svg>
+                        Withdrawals
+                    </Link>
+
 
                     {/* Course Management */}
                     <Link
                         href="/wp-admin/admin/course-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/course-management')
-                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
                             : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
@@ -209,7 +254,7 @@ export default function Sidebar() {
                         href="/wp-admin/admin/supoort-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/supoort-management')
-                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
                             : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
@@ -224,7 +269,7 @@ export default function Sidebar() {
                         href="/wp-admin/admin/user-activity"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/user-activity')
-                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
                             : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
@@ -238,7 +283,7 @@ export default function Sidebar() {
                         href="/wp-admin/admin/admin-management"
                         onClick={closeSidebar}
                         className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-colors ${isActive('/wp-admin/admin/admin-management')
-                            ? 'bg-[#0F8235] text-white font-bold shadow-lg'
+                            ? 'bg-[#009867] text-white font-bold shadow-lg'
                             : 'text-white/70 hover:bg-white/10 hover:text-white'
                             }`}
                     >
