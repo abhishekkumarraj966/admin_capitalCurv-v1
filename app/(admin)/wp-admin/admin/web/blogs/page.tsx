@@ -18,7 +18,7 @@ export default function BlogListPage() {
                 getBlogs()
             ]);
             setStats(statsData.result || statsData);
-            setBlogs(blogsData.result || blogsData);
+            setBlogs(blogsData.result?.data || blogsData.result || blogsData);
         } catch (error) {
             console.error('Failed to fetch blog data:', error);
         } finally {
@@ -55,15 +55,9 @@ export default function BlogListPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Blog Management</h1>
-                    <p className="text-gray-500 dark:text-gray-400">Manage your blog posts and categories.</p>
+                    <p className="text-gray-500 dark:text-gray-400">Manage your blog posts.</p>
                 </div>
                 <div className="flex gap-3">
-                    <Link
-                        href="/wp-admin/admin/web/blogs/categories"
-                        className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
-                    >
-                        Manage Categories
-                    </Link>
                     <Link
                         href="/wp-admin/admin/web/blogs/create"
                         className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-sm font-medium flex items-center"
@@ -118,7 +112,7 @@ export default function BlogListPage() {
                                             </span>
                                         </td>
                                         <td className="p-4 text-sm text-gray-600 dark:text-gray-400">
-                                            {blog.authorName || 'Admin'}
+                                            {blog.author?.adminName || 'Admin'}
                                         </td>
                                         <td className="p-4 text-sm text-gray-500 dark:text-gray-400">
                                             {blog.createdAt ? format(new Date(blog.createdAt), 'MMM d, yyyy') : '-'}

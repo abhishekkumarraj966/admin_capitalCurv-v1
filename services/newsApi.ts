@@ -26,20 +26,12 @@ export const getNewsCategories = async () => {
 // ... existing create/update/delete ...
 
 export const createNewsCategory = async (data: any) => {
-    // Try sending as FormData as backend might expect multipart (common if sharing router with file upload)
-    const formData = new FormData();
-    formData.append('name', data.name);
-
-    // Axios will set Content-Type to multipart/form-data with boundary automatically when sending FormData
-    const response = await axiosInstance.post('/news/admin/categories', formData);
+    const response = await axiosInstance.post('/news/admin/categories', data);
     return response.data;
 };
 
 export const updateNewsCategory = async (id: string, data: any) => {
-    const formData = new FormData();
-    formData.append('name', data.name);
-
-    const response = await axiosInstance.put(`/news/admin/categories/${id}`, formData);
+    const response = await axiosInstance.put(`/news/admin/categories/${id}`, data);
     return response.data;
 };
 

@@ -3,7 +3,7 @@
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { getSections, getBlogById, updateBlog } from '@/services/blogApi';
+import { getSections, getBlogById, updateBlog, createSection, deleteSection } from '@/services/blogApi';
 import RichTextEditor from '@/components/RichTextEditor';
 
 export default function EditBlogPage({ params }: { params: Promise<{ id: string }> }) {
@@ -17,11 +17,15 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
 
     // Form State
     const [title, setTitle] = useState('');
+    const [excerpt, setExcerpt] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [content, setContent] = useState('');
+    const [status, setStatus] = useState('draft');
     const [image, setImage] = useState<File | null>(null);
     const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState('');
 
     useEffect(() => {
         const loadData = async () => {
@@ -32,12 +36,14 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
                     getBlogById(id)
                 ]);
 
-                setCategories(categoriesData.result || categoriesData);
+                setCategories(categoriesData.result?.data || categoriesData.result || categoriesData);
 
-                const blog = blogData.result || blogData;
+                const blog = blogData.result?.blog || blogData.result || blogData;
                 setTitle(blog.title);
+                setExcerpt(blog.excerpt || '');
                 setCategoryId(blog.category?._id || blog.category || '');
-                setContent(blog.description || '');
+                setContent(blog.content || blog.description || '');
+                setStatus(blog.status || 'draft');
                 setCurrentImageUrl(blog.image);
             } catch (error) {
                 console.error('Failed to load data:', error);
@@ -67,19 +73,28 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!title || !categoryId || !content) {
+        if (!title || !excerpt || (!categoryId && !isCreatingCategory) || (isCreatingCategory && !newCategoryName) || !content) {
             alert('Please fill in all required fields');
             return;
         }
 
         setSaving(true);
         try {
+            let finalCategoryId = categoryId;
+
+            if (isCreatingCategory) {
+                const newCat = await createSection({ name: newCategoryName });
+                finalCategoryId = newCat.result?._id || newCat._id;
+            }
+
             const formData = new FormData();
             formData.append('title', title);
-            formData.append('category', categoryId);
-            formData.append('description', content);
+            formData.append('excerpt', excerpt);
+            formData.append('category', finalCategoryId);
+            formData.append('content', content);
+            formData.append('status', status);
             if (image) {
-                formData.append('image', image);
+                formData.append('coverImage', image);
             }
 
             await updateBlog(id, formData);
@@ -89,6 +104,32 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
             alert('Failed to update blog');
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleCategoryDelete = async () => {
+        if (!categoryId) return;
+        
+        const categoryToDelete = categories.find(c => c._id === categoryId);
+        if (!categoryToDelete) return;
+
+        if (!confirm(`Are you sure you want to delete the category "${categoryToDelete.name}"?`)) {
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await deleteSection(categoryId);
+            setCategoryId('');
+            // Refresh categories
+            const data = await getSections();
+            setCategories(data.result?.data || data.result || data);
+            alert('Category deleted successfully');
+        } catch (error: any) {
+            const message = error.response?.data?.message || 'Failed to delete category';
+            alert(message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -132,12 +173,34 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
 
                     {/* Category */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Category <span className="text-red-500">*</span>
-                        </label>
+                        <div className="flex items-center justify-between mb-1">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Category <span className="text-red-500">*</span>
+                            </label>
+                            {categoryId && !isCreatingCategory && (
+                                <button
+                                    type="button"
+                                    onClick={handleCategoryDelete}
+                                    className="text-xs text-red-600 hover:text-red-700 font-medium transition-colors flex items-center gap-1"
+                                >
+                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    Delete Category
+                                </button>
+                            )}
+                        </div>
                         <select
-                            value={categoryId}
-                            onChange={(e) => setCategoryId(e.target.value)}
+                            value={isCreatingCategory ? 'NEW' : categoryId}
+                            onChange={(e) => {
+                                if (e.target.value === 'NEW') {
+                                    setIsCreatingCategory(true);
+                                    setCategoryId('');
+                                } else {
+                                    setIsCreatingCategory(false);
+                                    setCategoryId(e.target.value);
+                                }
+                            }}
                             className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                             required
                         >
@@ -145,7 +208,71 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
                             {categories.map((cat) => (
                                 <option key={cat._id} value={cat._id}>{cat.name}</option>
                             ))}
+                            <option value="NEW">+ Create New Category</option>
                         </select>
+                    </div>
+
+                    {/* Status */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Status <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                            required
+                        >
+                            <option value="draft">Draft (Private)</option>
+                            <option value="published">Published (Visible to Public)</option>
+                            <option value="archived">Archived</option>
+                        </select>
+                        <p className="mt-1 text-xs text-gray-500">Only published blogs appear on the public website.</p>
+                    </div>
+
+                    {/* New Category Input */}
+                    {isCreatingCategory && (
+                        <div className="animate-in slide-in-from-top-2 duration-300">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                New Category Name <span className="text-red-500">*</span>
+                            </label>
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={newCategoryName}
+                                    onChange={(e) => setNewCategoryName(e.target.value)}
+                                    className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                                    placeholder="Enter category name"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsCreatingCategory(false);
+                                        setNewCategoryName('');
+                                    }}
+                                    className="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Excerpt */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Excerpt <span className="text-red-500">*</span>
+                        </label>
+                        <textarea
+                            value={excerpt}
+                            onChange={(e) => setExcerpt(e.target.value)}
+                            rows={3}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all resize-none"
+                            placeholder="Brief summary of the blog post"
+                            required
+                        />
+                        <p className="mt-1 text-xs text-gray-500">A short summary displayed in blog lists.</p>
                     </div>
 
                     {/* Image Upload */}

@@ -25,7 +25,7 @@ export default function NewsManagementPage() {
 
             setNewsStats(statsRes.result || statsRes);
 
-            const newsData = newsRes.result?.news || newsRes.result || [];
+            const newsData = newsRes.result?.data || newsRes.result?.news || newsRes.result || [];
             setNewsList(Array.isArray(newsData) ? newsData : []);
 
         } catch (error) {
@@ -60,7 +60,9 @@ export default function NewsManagementPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[
                         { label: 'Total News', value: newsStats?.totalNews || 0, icon: '📰', color: 'bg-blue-50 text-blue-600' },
-                        // Add more stats if API provides them
+                        { label: 'Published', value: newsStats?.activeNews || 0, icon: '✅', color: 'bg-emerald-50 text-emerald-600' },
+                        { label: 'Categories', value: newsStats?.totalCategories || 0, icon: '📁', color: 'bg-purple-50 text-purple-600' },
+                        { label: 'Total Views', value: newsStats?.overview?.totalViews || 0, icon: '👁️', color: 'bg-orange-50 text-orange-600' },
                     ].map((stat, i) => (
                         <div key={i} className="bg-white dark:bg-[#021F17] p-6 rounded-2xl border border-gray-100 dark:border-[#021F17] shadow-sm">
                             <div className="flex items-center justify-between">
@@ -107,8 +109,8 @@ export default function NewsManagementPage() {
                                         <tr key={item._id} className="hover:bg-gray-50/50 dark:hover:bg-[#000F0A]/50 transition-colors">
                                             <td className="p-4">
                                                 <div className="h-12 w-20 relative rounded-lg overflow-hidden bg-gray-100">
-                                                    {item.image ? (
-                                                        <Image src={item.image} alt={item.title} fill className="object-cover" />
+                                                    {item.coverImage ? (
+                                                        <Image src={item.coverImage} alt={item.title} fill className="object-cover" unoptimized />
                                                     ) : (
                                                         <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Img</div>
                                                     )}

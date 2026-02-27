@@ -19,10 +19,17 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
 
     const [form, setForm] = useState({
         title: '',
+        summary: '',
         content: '',
         category: '',
         image: null as File | null,
-        imageUrl: ''
+        imageUrl: '',
+        status: 'published',
+        isBreaking: false,
+        isPinned: false,
+        sentiment: 'neutral',
+        relatedStocks: '',
+        tags: ''
     });
 
     useEffect(() => {
@@ -35,11 +42,18 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
 
                 const news = newsRes.result || newsRes;
                 setForm({
-                    title: news.title,
-                    content: news.content,
-                    category: news.category?._id || news.category,
+                    title: news.title || '',
+                    summary: news.summary || '',
+                    content: news.content || '',
+                    category: news.category?._id || news.category || '',
                     image: null,
-                    imageUrl: news.image || ''
+                    imageUrl: news.coverImage || news.image || '',
+                    status: news.status || 'published',
+                    isBreaking: !!news.isBreaking,
+                    isPinned: !!news.isPinned,
+                    sentiment: news.sentiment || 'neutral',
+                    relatedStocks: Array.isArray(news.relatedStocks) ? news.relatedStocks.join(', ') : '',
+                    tags: Array.isArray(news.tags) ? news.tags.join(', ') : ''
                 });
 
                 const catsData = catsRes.result?.categories || catsRes.result || [];
@@ -75,10 +89,28 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
 
             const formData = new FormData();
             formData.append('title', form.title);
+            formData.append('summary', form.summary);
             formData.append('content', form.content);
             formData.append('category', categoryId);
+            formData.append('status', form.status);
+            formData.append('isBreaking', String(form.isBreaking));
+            formData.append('isPinned', String(form.isPinned));
+            formData.append('sentiment', form.sentiment);
+
+            if (form.tags) {
+                form.tags.split(',').map(tag => tag.trim()).filter(Boolean).forEach(tag => {
+                    formData.append('tags[]', tag);
+                });
+            }
+
+            if (form.relatedStocks) {
+                form.relatedStocks.split(',').map(s => s.trim().toUpperCase()).filter(Boolean).forEach(s => {
+                    formData.append('relatedStocks[]', s);
+                });
+            }
+
             if (form.image) {
-                formData.append('image', form.image);
+                formData.append('coverImage', form.image);
             }
 
             await updateNews(id, formData);
@@ -105,7 +137,7 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
             <div className="bg-white dark:bg-[#021F17] rounded-2xl shadow-sm border border-gray-100 dark:border-[#021F17] p-6 max-w-4xl mx-auto">
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
+                        <div className="md:col-span-2">
                             <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Title</label>
                             <input
                                 type="text"
@@ -115,6 +147,18 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                                 required
                             />
                         </div>
+
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Summary</label>
+                            <textarea
+                                value={form.summary}
+                                onChange={(e) => setForm({ ...form, summary: e.target.value })}
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-[#000F0A]/50 border border-gray-200 dark:border-[#021F17] rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20 h-20"
+                                placeholder="Brief summary of the article"
+                                required
+                            />
+                        </div>
+
                         <div>
                             <div className="flex justify-between items-center mb-2">
                                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">Category</label>
@@ -122,7 +166,6 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                                     type="button"
                                     onClick={() => {
                                         setIsCreatingCategory(!isCreatingCategory);
-                                        // If switching to create, clear selection, else keep it (or clear if desired)
                                         if (!isCreatingCategory) {
                                             setForm({ ...form, category: '' });
                                             setNewCategoryName('');
@@ -156,6 +199,75 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
                                     ))}
                                 </select>
                             )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Sentiment</label>
+                            <select
+                                value={form.sentiment}
+                                onChange={(e) => setForm({ ...form, sentiment: e.target.value })}
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-[#000F0A]/50 border border-gray-200 dark:border-[#021F17] rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20"
+                            >
+                                <option value="neutral">Neutral</option>
+                                <option value="positive">Positive</option>
+                                <option value="negative">Negative</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                            <select
+                                value={form.status}
+                                onChange={(e) => setForm({ ...form, status: e.target.value })}
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-[#000F0A]/50 border border-gray-200 dark:border-[#021F17] rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20"
+                            >
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                                <option value="archived">Archived</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Related Stocks (CSV)</label>
+                            <input
+                                type="text"
+                                value={form.relatedStocks}
+                                onChange={(e) => setForm({ ...form, relatedStocks: e.target.value })}
+                                placeholder="e.g. RELIANCE, TCS"
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-[#000F0A]/50 border border-gray-200 dark:border-[#021F17] rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Tags (CSV)</label>
+                            <input
+                                type="text"
+                                value={form.tags}
+                                onChange={(e) => setForm({ ...form, tags: e.target.value })}
+                                placeholder="e.g. economy, rbi"
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-[#000F0A]/50 border border-gray-200 dark:border-[#021F17] rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-6 pt-6">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={form.isBreaking}
+                                    onChange={(e) => setForm({ ...form, isBreaking: e.target.checked })}
+                                    className="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
+                                />
+                                <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Breaking News</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={form.isPinned}
+                                    onChange={(e) => setForm({ ...form, isPinned: e.target.checked })}
+                                    className="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
+                                />
+                                <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Pinned</span>
+                            </label>
                         </div>
                     </div>
 

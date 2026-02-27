@@ -14,10 +14,16 @@ export default function CreateNewsPage() {
 
     const [form, setForm] = useState({
         title: '',
+        summary: '',
         content: '',
         category: '', // ID
         image: null as File | null,
-        tags: ''
+        tags: '',
+        status: 'published',
+        isBreaking: false,
+        isPinned: false,
+        sentiment: 'neutral',
+        relatedStocks: ''
     });
 
     const fetchCategories = async () => {
@@ -59,10 +65,28 @@ export default function CreateNewsPage() {
 
             const formData = new FormData();
             formData.append('title', form.title);
+            formData.append('summary', form.summary);
             formData.append('content', form.content);
             formData.append('category', categoryId);
+            formData.append('status', form.status);
+            formData.append('isBreaking', String(form.isBreaking));
+            formData.append('isPinned', String(form.isPinned));
+            formData.append('sentiment', form.sentiment);
+            
+            if (form.tags) {
+                form.tags.split(',').map(tag => tag.trim()).filter(Boolean).forEach(tag => {
+                    formData.append('tags[]', tag);
+                });
+            }
+
+            if (form.relatedStocks) {
+                form.relatedStocks.split(',').map(s => s.trim().toUpperCase()).filter(Boolean).forEach(s => {
+                    formData.append('relatedStocks[]', s);
+                });
+            }
+
             if (form.image) {
-                formData.append('image', form.image);
+                formData.append('coverImage', form.image);
             }
 
             await createNews(formData);
@@ -89,7 +113,7 @@ export default function CreateNewsPage() {
             <div className="rounded-2xl shadow-sm border p-6 max-w-4xl mx-auto" style={{ background: 'rgba(255, 255, 255, 0.08)', borderColor: 'rgba(255, 255, 255, 0.1)' }}>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
+                        <div className="md:col-span-2">
                             <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Title</label>
                             <input
                                 type="text"
@@ -99,6 +123,18 @@ export default function CreateNewsPage() {
                                 required
                             />
                         </div>
+
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Summary</label>
+                            <textarea
+                                value={form.summary}
+                                onChange={(e) => setForm({ ...form, summary: e.target.value })}
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-[#000F0A]/50 border border-gray-200 dark:border-[#021F17] rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20 h-20"
+                                placeholder="Brief summary of the article"
+                                required
+                            />
+                        </div>
+
                         <div>
                             <div className="flex justify-between items-center mb-2">
                                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">Category</label>
@@ -137,6 +173,75 @@ export default function CreateNewsPage() {
                                     ))}
                                 </select>
                             )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Sentiment</label>
+                            <select
+                                value={form.sentiment}
+                                onChange={(e) => setForm({ ...form, sentiment: e.target.value })}
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-[#000F0A]/50 border border-gray-200 dark:border-[#021F17] rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20"
+                            >
+                                <option value="neutral">Neutral</option>
+                                <option value="positive">Positive</option>
+                                <option value="negative">Negative</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                            <select
+                                value={form.status}
+                                onChange={(e) => setForm({ ...form, status: e.target.value })}
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-[#000F0A]/50 border border-gray-200 dark:border-[#021F17] rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20"
+                            >
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                                <option value="archived">Archived</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Related Stocks (CSV)</label>
+                            <input
+                                type="text"
+                                value={form.relatedStocks}
+                                onChange={(e) => setForm({ ...form, relatedStocks: e.target.value })}
+                                placeholder="e.g. RELIANCE, TCS"
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-[#000F0A]/50 border border-gray-200 dark:border-[#021F17] rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Tags (CSV)</label>
+                            <input
+                                type="text"
+                                value={form.tags}
+                                onChange={(e) => setForm({ ...form, tags: e.target.value })}
+                                placeholder="e.g. economy, rbi"
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-[#000F0A]/50 border border-gray-200 dark:border-[#021F17] rounded-lg outline-none focus:ring-2 focus:ring-emerald-500/20"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-6 pt-6">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={form.isBreaking}
+                                    onChange={(e) => setForm({ ...form, isBreaking: e.target.checked })}
+                                    className="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
+                                />
+                                <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Breaking News</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={form.isPinned}
+                                    onChange={(e) => setForm({ ...form, isPinned: e.target.checked })}
+                                    className="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
+                                />
+                                <span className="text-sm font-bold text-gray-700 dark:text-gray-300">Pinned</span>
+                            </label>
                         </div>
                     </div>
 

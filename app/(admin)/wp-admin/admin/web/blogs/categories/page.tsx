@@ -15,7 +15,7 @@ export default function CategoriesPage() {
         setLoading(true);
         try {
             const data = await getSections();
-            setCategories(data.result || data);
+            setCategories(data.result?.data || data.result || data);
         } catch (error) {
             console.error('Failed to fetch categories:', error);
         } finally {
